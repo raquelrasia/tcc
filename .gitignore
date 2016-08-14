@@ -27,3 +27,7 @@
 *.exe
 *.out
 *.app
+
+
+*.pyc
+djangofiles/djangobookmarks/djangobookmarks/videos/

@@ -1,0 +1,13 @@
+{%extends "base.html"%}
+{%block title%} {{ cours.code }} {%endblock%}
+{%block head%} {{ cours.name }} - {{ cours.code  }} 
+<p>
+Professor(a): <a href="/user/{{ cours.user_teacher.username }}"> {{ cours.user_teacher.username }} </a>
+</p>
+{%endblock%}
+{%block content%}
+	{% include "video_list.html"%}
+	<form action="/video_upload/">
+   	 <input type="submit" value="Adicionar Video" />
+	</form>
+{%endblock%}

@@ -1,0 +1,18 @@
+{%if cours%}
+<ul class="cours">
+	{%for my_cours in cours%}
+ 		<li>
+			<a href=" /class/{{ my_cours.code|escape }}" class="title">
+			{{ my_cours.name }} - {{ my_cours.code|escape}}</a>
+			{%if show_edit %}
+				{% if my_cours.user_teacher == request.user %}
+				<a href="/class_save/?code={{ my_cours.code|escape }}" class="edit">[editar]</a>
+				{%endif%}
+			{%endif%}
+		<br />
+	    </li>
+	{% endfor %}
+</ul>
+{% else %}
+ <p> Nenhuma disciplina cadastrada </p>
+{%endif%}

@@ -5,6 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui
+QT += xml
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -14,12 +15,15 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
+    mycoursedialog.cpp \
     mydialog.cpp
 
 HEADERS  += mainwindow.h \
+    mycoursedialog.h \
     mydialog.h
 
 FORMS    += mainwindow.ui \
+    mycoursedialog.ui \
     mydialog.ui
 
 RESOURCES += \

@@ -59,8 +59,6 @@ MyDialog::~MyDialog()
 
 void MyDialog::on_pushButton_clicked() // OK
 {
-    //path = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) ;
-
     QString dir_name = QFileDialog::getExistingDirectory(this, tr("Open Directory"), path,
                                                          QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks) ;
     if (dir_name != "") {

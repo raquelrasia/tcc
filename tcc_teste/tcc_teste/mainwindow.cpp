@@ -1,6 +1,23 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "mydialog.h"
+#include "mycoursedialog.h"
+
+/*void listElements(QDomElement root, QString tagname, QString attribute) {
+
+    QDomNodeList items = root.elementsByTagName(tagname) ;
+    qDebug() << "Total items = " << items.count() ;
+
+    for (int i = 0; i < items.count(); i++) {
+        QDomNode itemnode = items.at(i) ;
+
+        // convert to element
+        if(itemnode.isElement()) {
+            QDomElement itemele = itemnode.toElement() ;
+            qDebug() << itemele.attribute(attribute) ;
+        }
+    }
+}*/
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -16,6 +33,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionEncerrar_Gravacao, SIGNAL(triggered(bool)), ui->pushButton_3, SLOT(click())) ;
     ui->actionEncerrar_Gravacao->setEnabled(false);
     ui->pushButton_3->setEnabled(false);
+    ui->checkBox_2->setChecked(true);
 
     /* SECAO DIREITA */
     ui->pushButton_2->setEnabled(false);
@@ -50,21 +68,32 @@ void MainWindow::on_pushButton_clicked()
         number_of_recordings = 0 ;
     }
 
-    MyDialog mDialog ;
-    mDialog.setModal(true) ;
-    mDialog.exec() ;
+    if (!(ui->checkBox_2->isChecked())){   // Se automatic path estiver desabilitado
+        MyDialog mDialog ;
+        mDialog.setModal(true) ;
+        mDialog.exec() ;
 
-    if(mDialog.get_dialog_ended()) {
-        dialog_ended = mDialog.get_dialog_ended() ;
-        ui->pushButton->setEnabled(false);
-        ui->actionNova_Gravacao->setEnabled(false);
-        ui->pushButton_3->setEnabled(true);
-        ui->actionEncerrar_Gravacao->setEnabled(true);
-        ui->pushButton_2->setEnabled(true);
+        if(mDialog.get_dialog_ended()) {
+            dialog_ended = mDialog.get_dialog_ended() ;
+            ui->pushButton->setEnabled(false);
+            ui->actionNova_Gravacao->setEnabled(false);
+            ui->pushButton_3->setEnabled(true);
+            ui->actionEncerrar_Gravacao->setEnabled(true);
+            ui->pushButton_2->setEnabled(true);
 
-        path = mDialog.get_path() ;
-        filename = mDialog.get_filename() ;
-        video_file_type = mDialog.get_file_type() ;
+            path = mDialog.get_path() ;
+            filename = mDialog.get_filename() ;
+            video_file_type = mDialog.get_file_type() ;
+        }
+    }
+
+    else {
+        MyCourseDialog mcDialog ;
+        mcDialog.setModal(true) ;
+        mcDialog.exec() ;
+        path = QStandardPaths::writableLocation(QStandardPaths::MoviesLocation) + QString("/") ;
+        qDebug() << path ;
+
     }
 }
 

@@ -22,6 +22,7 @@ public:
     ~MainWindow();
     void closeEvent(QCloseEvent *event);
     bool fileExists(QString path) ;
+
 private slots:
     void on_pushButton_clicked();
     void on_pushButton_2_clicked();
@@ -31,20 +32,26 @@ private slots:
     void on_actionSair_triggered();
 
 private:
+
     Ui::MainWindow *ui;
+
     QProcess * ffmpeg_process ;
     QProcess * ffmpeg_cat ;
+
     QString path ;
     QString filename ;
-    QString video_file_type ;
+    QString video_file_extension ;
     QString full_path ;
-
+    QString course_code ;
+    QString class_code ;
     QString fps ; // Frames per second
+
     uint8_t number_of_recordings ;
 
     QFont font ;
 
     bool dialog_ended ;
+    bool autopath_dialog_ended ;
     bool lecture_init ;
     bool recording_init ;
 };

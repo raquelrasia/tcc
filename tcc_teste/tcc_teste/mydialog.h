@@ -24,7 +24,7 @@ public:
     bool get_dialog_ended() ;
     QString get_path() ;
     QString get_filename() ;
-    QString get_file_type() ;
+    QString get_file_extension() ;
 
 private slots:
     void on_pushButton_clicked();
@@ -40,7 +40,7 @@ private:
     QString path ;
     QString filename ;
     QString full_path ;
-    QString file_type ;
+    QString file_extension ;
     QString date ;
 
     bool dialog_ended ;

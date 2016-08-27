@@ -24,7 +24,7 @@ QStringList getEntry(QDomElement root, QString tagname, QString attribute) {
 }
 
 /************* AUX METHOD *************/
-// returns current course
+// returns current course code
 QString MyCourseDialog::get_current_course(){
     return CurrentCourse ;
 }
@@ -41,6 +41,25 @@ bool MyCourseDialog::get_dialog_ended() {
     return dialog_ended ;
 }
 
+/************* AUX METHOD *************/
+// returns path
+QString MyCourseDialog::get_path() {
+    return path ;
+}
+
+/************* AUX METHOD *************/
+// returns the file name
+QString MyCourseDialog::get_filename() {
+    return filename ;
+}
+
+/************* AUX METHOD *************/
+// returns the file extension
+QString MyCourseDialog::get_file_extension() {
+    return file_extension ;
+}
+
+/************* CONSTRUCTOR METHOD *************/
 MyCourseDialog::MyCourseDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::MyCourseDialog)
@@ -73,6 +92,7 @@ MyCourseDialog::MyCourseDialog(QWidget *parent) :
 
     // gets the course_names for a given lecturer
     CourseList = getEntry(root, "Course", "Name") ;
+    CourseIDList = getEntry(root, "Course", "ID") ;
 
     for(uint8_t i = 0; i < CourseList.size(); i++) {
         ui->listWidget->addItem(CourseList.at(i));
@@ -80,20 +100,41 @@ MyCourseDialog::MyCourseDialog(QWidget *parent) :
 
     // Selects the first course by default
     ui->listWidget->item(0)->setSelected(true);
+    ui->listWidget_2->item(0)->setSelected(true);
 
     // Sets current row to 0. This is done due to a weird error that's been
     // happening with CurrentRow return value
     ui->listWidget->setCurrentRow(0);
+    ui->listWidget_2->setCurrentRow(0);
+
+    date = QDate::currentDate() ;
+
+    if(date.month() <= 7) {
+        semester = QString::number(date.year()) + "_" + "1" ;
+    }
+    else {
+        semester = QString::number(date.year()) + "_" + "2" ;
+    }
+
+
+    // The new file will be named after the current date,
+    // e.g., 27_08_2016.mkv
+    filename = date.toString("dd_MM_yyyy") ;
+
+    // File extension
+    file_extension = ".mkv" ;
 }
 
 
-
+/************* DESTRUCTOR METHOD *************/
 MyCourseDialog::~MyCourseDialog()
 {
     delete ui;
 }
 
-
+/************* LIST_WIDGET *************/
+// Defines behaviour of the Course "LIST_WIDGET"
+// This method is called everytime an item is selected
 void MyCourseDialog::on_listWidget_itemSelectionChanged()
 {
     ui->listWidget_2->clear();
@@ -102,8 +143,8 @@ void MyCourseDialog::on_listWidget_itemSelectionChanged()
     // Class Selection Section
     QDomNodeList courses = root.elementsByTagName("Course") ;
 
-    // Fills QStringList with classes for the first course
-    if(ui->listWidget->currentRow() == -1) { // Solves a weird bug where currentRow() returns -1 (why, God?!)
+    // Solves a weird bug where currentRow() returns -1 (why, God?!)
+    if(ui->listWidget->currentRow() == -1) {
         ui->listWidget->setCurrentRow(0) ;
     }
 
@@ -116,17 +157,50 @@ void MyCourseDialog::on_listWidget_itemSelectionChanged()
     for(uint8_t i = 0; i < CurrentClassList.size(); i++) {
         ui->listWidget_2->addItem(CurrentClassList.at(i));
     }
+
+    // Sets CurrentCourse code and CurrentClass to the currently
+    // selected on both widgets
+    CurrentCourse = CourseIDList.at(ui->listWidget->currentRow()) ;
 }
 
-void MyCourseDialog::on_pushButton_2_clicked() // "CONTINUE" PUSH_BUTTON
+void MyCourseDialog::on_listWidget_2_itemSelectionChanged()
 {
-    CurrentCourse = ui->listWidget->currentItem()->text() ; ;
-    CurrentClass = ui->listWidget_2->currentItem()->text() ; ;
-
-    dialog_ended = close() ;
+    // Solves a weird bug where currentRow() returns -1 (why, God?!)
+    if(ui->listWidget_2->currentRow() == -1) {
+        ui->listWidget_2->setCurrentRow(0);
+    }
+    CurrentClass = CurrentClassList.at(ui->listWidget_2->currentRow()) ;
 }
 
-void MyCourseDialog::on_pushButton_clicked() // "BACK" PUSH_BUTTON
+/************* PUSH_BUTTON *************/
+// Defines behaviour of the "CONTINUE" push button
+void MyCourseDialog::on_pushButton_2_clicked()
+{
+    if(CurrentCourse != "" && CurrentClass != "") {
+        dialog_ended = close() ;
+    }
+
+    path = QStandardPaths::writableLocation(QStandardPaths::MoviesLocation) + QString("/") ;
+
+    QDir dir(path) ;
+
+    // Creates a new folder for the recordings
+    // This folder's name is the course code.
+    // It doesn't matter that it actually doesn't
+    // check whether the folder exists, for mkpath
+    // only creates a directory if it doesn't already
+    //exists
+    dir.mkpath(path + CurrentCourse) ;
+    path = path + CurrentCourse + "/" ;
+    dir.mkpath(path + CurrentClass) ;
+    path = path + CurrentClass + "/" ;
+    dir.mkpath(path + semester) ;
+    path = path + semester + "/" ;
+}
+
+/************* PUSH_BUTTON *************/
+// Defines behaviour of the "BACK" push button
+void MyCourseDialog::on_pushButton_clicked()
 {
     close() ;
 }

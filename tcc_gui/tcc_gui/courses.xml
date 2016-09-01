@@ -1,0 +1,13 @@
+<Courses>
+ <Course ID="IF66D" Name="SISTEMAS_OPERACIONAIS">
+  <Class Code="S11"/>
+  <Class Code="S71"/>
+ </Course>
+ <Course ID="EL67F" Name="CONTROLE_2">
+  <Class Code="S11"/>
+ </Course>
+ <Course ID="IF67D" Name="SISTEMAS_INTELIGENTES_1">
+  <Class Code="S11"/>
+  <Class Code="S12"/>
+ </Course>
+</Courses>

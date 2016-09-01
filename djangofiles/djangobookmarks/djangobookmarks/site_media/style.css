@@ -38,13 +38,21 @@ h1 { color: #111;
 	text-align: left; }
 
 
+h4 { color: #111; 
+	font-family: 'Open Sans', 
+	sans-serif; font-size: 50px; 
+	font-weight: 300; 
+	line-height: 32px; 
+	margin: 0 0 72px; 
+	text-align: left; }
+
 h2 { color: #111; 
 	font-family: 'Open Sans', 
 	sans-serif; font-size: 30px; 
 	font-weight: 300; 
 	line-height: 32px; 
 	margin: 0 0 72px; 
-	text-align: center; }
+	text-align: left; }
 
 
 p { color: #685206; font-family: 
@@ -75,6 +83,6 @@ ul.tags, ul.tags li{
 .tag-cloud-4{ font-size: 180%; }
 .tag-cloud-5{ font-size: 200%; }
 
-ul.cours .edit{
+ul.course .edit{
 	font-size : 70%;
 }

@@ -2,8 +2,8 @@
 <ul class = "videos">
 	{%for video in videos%}
  		<li>
-			<a href=" /videos/{{ video.file.url|escape}}" class="title">
-			{{ video.file.url|escape}}</a>
+			<a href="/files/{{ video.file.url|escape}}" class="title">
+			{{ video.name|escape }}</a>
 		<br />
 		{%if show_tags%}
 		Tags:

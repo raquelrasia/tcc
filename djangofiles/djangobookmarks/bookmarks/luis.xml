@@ -1,0 +1,13 @@
+<root>
+	<teacher username="luis" />
+		<course code="EL68B" name="Comunicacoes Digitais">
+			<class name="S11">
+				<year>2016</year>
+				<semester>1</semester>
+			</class>
+			<class name="S12">
+				<year>2017</year>
+				<semester>1</semester>
+			</class>
+		</course>
+</root>

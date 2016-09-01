@@ -1,13 +1,16 @@
 {%extends "base.html"%}
-{%block title%} {{ cours.code }} {%endblock%}
-{%block head%} {{ cours.name }} - {{ cours.code  }} 
+{%block title%} {{ course.code }} || {{ class.name }}  {%endblock%}
+{%block head%} {{ course.name }} - {{ course.code  }} 
+<h4>
+{{ class.name }} - {{ class.year }}/{{ class.semester }}
+</h4>
 <p>
-Professor(a): <a href="/user/{{ cours.user_teacher.username }}"> {{ cours.user_teacher.username }} </a>
+Professores(a): <a href="/user/{{ class.user_teacher.username }}"> {{ class.user_teacher.username }} </a>
 </p>
 {%endblock%}
 {%block content%}
 	{% include "video_list.html"%}
-	<form action="/video_upload/">
-   	 <input type="submit" value="Adicionar Video" />
+ 	<form action="video_upload/">
+   	<input type="submit" value="Adicionar Video" />
 	</form>
 {%endblock%}

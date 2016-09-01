@@ -1,6 +1,12 @@
 {%extends "base.html"%}
-{%block title%} Registro de Disciplina {%endblock%}
-{%block head%} Cadastre uma nova Disciplina {%endblock%}
+{%block title%} {{ course.code }} {%endblock%}
+{%block head%} {{ course.name }} - {{ course.code  }} 
+{%endblock%}
 {%block content%}
-	{%include "class_save_form.html" %}
+<form id="save-form" method="post" action=".">
+{% csrf_token %}
+	{{ form.as_p }}
+	<input type="submit" value = "salvar" />
+</form>
+
 {%endblock%}

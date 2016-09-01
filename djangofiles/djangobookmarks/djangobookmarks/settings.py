@@ -27,8 +27,11 @@ ALLOWED_HOSTS = []
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'djangobookmarks/videos')
+MEDIA_ROOT = 'djangobookmarks/files/' #os.path.join(BASE_DIR, 'djangobookmarks/videos')
+
+DATE_INPUT_FORMATS = ('%d-%m-%Y')
 # Application definition
+
 
 INSTALLED_APPS = (
     'django.contrib.admin',
@@ -37,7 +40,8 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'djangobookmarks.bookmarks',
+    #'djangobookmarks.bookmarks',
+    'bookmarks'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -65,7 +69,7 @@ DATABASES = {
     }
 }
 
-#Templathes path
+#Templaths path
 TEMPLATE_DIRS = (
     join(BASE_DIR,  'templates'),
 )
@@ -73,9 +77,9 @@ TEMPLATE_DIRS = (
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'pt-br'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Sao_Paulo'
 
 USE_I18N = True
 

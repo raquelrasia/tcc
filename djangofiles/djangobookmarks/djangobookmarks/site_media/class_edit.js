@@ -1,25 +1,25 @@
-function class_edit(){
+function course_edit(){
 	var item = $(this).parent();
 	var code =  item.find(".title").attr("href").split("/class/").pop();
-	item.load("/class_save/?ajax&code=" + escape(code), null, function(){
-		$("#save-form").submit(class_save);	
+	item.load("/course_save/?ajax&code=" + escape(code), null, function(){
+		$("#save-form").submit(course_save);	
 	});
 	return false;
 };
 
-function class_save(){
+function course_save(){
 	var item = $(this).parent();
 	var data = {
 		code : item.find("#id_code").val(),
 		name : item.find("#id_name").val(),
 		'csrfmiddlewaretoken' : getCookie('csrftoken'),
 	};
-	$.post("/class_save/?ajax", data, function(result){
+	$.post("/course_save/?ajax", data, function(result){
 		if (result != "failure")
 		{
 			item.before($("li", result).get(0));
 			item.remove();
-			$("ul.cours .edit").click(class_edit);
+			$("ul.course .edit").click(course_edit);
 		}
 		else
 		{
@@ -30,7 +30,7 @@ function class_save(){
 };
 
 $(document).ready(function(){
-	$("ul.cours .edit").click(class_edit);
+	$("ul.course .edit").click(course_edit);
 });
 
 function getCookie(name) {

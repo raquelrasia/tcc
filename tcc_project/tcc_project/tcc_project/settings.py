@@ -1,5 +1,5 @@
 """
-Django settings for djangobookmarks project.
+Django settings for tcc_project project.
 
 For more information on this file, see
 https://docs.djangoproject.com/en/1.7/topics/settings/
@@ -27,7 +27,7 @@ ALLOWED_HOSTS = []
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
-MEDIA_ROOT = 'djangobookmarks/files/' #os.path.join(BASE_DIR, 'djangobookmarks/videos')
+MEDIA_ROOT = 'tcc_project/files/' #os.path.join(BASE_DIR, 'tcc_project/videos')
 
 DATE_INPUT_FORMATS = ('%d-%m-%Y')
 # Application definition
@@ -40,8 +40,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    #'djangobookmarks.bookmarks',
-    'bookmarks'
+    'lecture_recorder'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -54,9 +53,9 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'djangobookmarks.urls'
+ROOT_URLCONF = 'tcc_project.urls'
 
-WSGI_APPLICATION = 'djangobookmarks.wsgi.application'
+WSGI_APPLICATION = 'tcc_project.wsgi.application'
 
 
 # Database

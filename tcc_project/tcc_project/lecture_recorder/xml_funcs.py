@@ -1,6 +1,6 @@
 import xml.etree.cElementTree as ET
 from aux_funcs import get_course_class_path
-from djangobookmarks.settings import MEDIA_ROOT
+from tcc_project.settings import MEDIA_ROOT
 import os
 import datetime
 from xml.dom import minidom

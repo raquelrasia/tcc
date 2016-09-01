@@ -5,8 +5,8 @@ from django.template.loader import get_template
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render_to_response, get_object_or_404
-from bookmarks.forms import *
-from bookmarks.models import *
+from lecture_recorder.forms import *
+from lecture_recorder.models import *
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.core.exceptions import ObjectDoesNotExist
@@ -15,7 +15,7 @@ from datetime import datetime
 from django.views.decorators.csrf import csrf_exempt
 from xml_funcs import *
 import os
-from djangobookmarks.settings import MEDIA_ROOT
+from tcc_project.settings import MEDIA_ROOT
 from django.utils.encoding import smart_str
 
 

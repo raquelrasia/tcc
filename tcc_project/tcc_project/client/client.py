@@ -18,10 +18,12 @@ class AccessServer():
                 print('connection successfull')
                 self.file_transfers = FileTransfers(self.client)
                 #self.file_transfers.file_upload(video_path)
-                fname = self.file_transfers.teacher_file_download(self.client, self.username)
                 course = Course('EL68B')
                 my_class = Class('S11', 2016, 1)
-                self.file_transfers.video_file_download(self.client, course, my_class, 'luis')
+                self.teacher_fname = self.file_transfers.teacher_file_download(self.client, self.username)
+                self.videos_remote_fname = self.file_transfers.video_file_download(self.client, course, my_class, self.username)
+                self.video_sync(course, my_class)
+
                 self.file_transfers.file_upload(video_path, course, my_class, 'hehehehe', '10102010')
 
     def login(self, username, password):
@@ -40,7 +42,11 @@ class AccessServer():
             success = False
         return client, success
 
-    def video_sync(self, course, my_class, year, semester):
+    def video_sync(self, course, my_class):
+        self.videos_fname = self.videos_remote_filename.split('_remote')
+        print(self.videos_fname)
+        # chama comparacao de arquivos xml
+        self.file_transfers.compare_files()
         video_path = course + '/' + my_class + '/' + +str(year) + '_' + str(semester) 
         local_name = self.file_transfers.file_download(video_path)
 

@@ -49,17 +49,17 @@ class FileTransfers():
                    'class_semester' : my_class.semester, 'class_year' : my_class.year, 
                    'username' : username , 'csrfmiddlewaretoken': csrftoken}
 
-        local_filename = ROOT +'/videos/' + course.code + '/' + my_class.name + '/'+ str(my_class.year) + '_'+ str(my_class.semester) + '/'
-        names_split = local_filename.split('/')
+        remote_filename = ROOT +'/videos/' + course.code + '/' + my_class.name + '/'+ str(my_class.year) + '_'+ str(my_class.semester) + '/'
+        names_split = remote_filename.split('/')
         name = names_split[-2] + names_split[-1]
-        local_filename = local_filename + name +'_remote.xml'
+        remote_filename = remote_filename + name +'_remote.xml'
         # NOTE the stream=True parameter
         r = requests.get(BASE_URL + VIDEO_INFO_DOWNLOAD_URL, stream=True, params=payload)
         print(len(r.content))
-        if not os.path.exists(os.path.dirname(local_filename)):
-            os.makedirs(os.path.dirname(local_filename))        
-        with open(local_filename, 'wb') as f:
+        if not os.path.exists(os.path.dirname(remote_filename)):
+            os.makedirs(os.path.dirname(remote_filename))        
+        with open(remote_filename, 'wb') as f:
             for chunk in r.iter_content(chunk_size=1024): 
                 if chunk: # filter out keep-alive new chunks
                     f.write(chunk)
-        return local_filename
+        return remote_filename

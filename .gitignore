@@ -28,6 +28,5 @@
 *.out
 *.app
 
-
+djangofiles/djangobookmarks/djangobookmarks/files/
 *.pyc
-djangofiles/djangobookmarks/djangobookmarks/videos/

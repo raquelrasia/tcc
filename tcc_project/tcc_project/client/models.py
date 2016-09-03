@@ -11,11 +11,13 @@ class Class():
         self.semester = class_semester
 
 class Video():
-    def __init__(self, course, my_class, video_date):
+    def __init__(self, course, my_class, video_date, video_name_path):
         self.date = video_date
-        self.path = self._get_video_path(course, my_class) 
-        self.path_name = path + date
+        if(video_name_path.has_key('total_path')):
+             self.path = video_name_path['total_path']
+        elif video_name_path.has_key('name'):
+             self.path = self._get_video_path(course, my_class) + video_name_path['name']            
 
     def _get_video_path(self, course, my_class):
-        path =  course.code +'/'+ my_class.name + '/' + str(my_class.year) + '_' + my_class.semester + '/'
+        path =  course.code +'/'+ my_class.name + '/' + str(my_class.year) + '_' + str(my_class.semester) + '/'
         return path

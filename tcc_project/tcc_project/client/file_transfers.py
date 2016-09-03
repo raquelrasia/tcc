@@ -2,23 +2,24 @@ import requests
 import os
 import datetime
 from models import Course, Class, Video
+ROOT = 'files/'
 BASE_URL = "http://127.0.0.1:8000/"
 VIDEO_UPLOAD_URL = "api/video_upload/"
 TEACHER_INFO_DOWNLOAD_URL = 'api/teacher_xml_download/'
 VIDEO_INFO_DOWNLOAD_URL = 'api/video_xml_download/'
-ROOT = 'files/'
 
 class FileTransfers():
     def __init__(self, client):
         self.client = client
 
-    def file_upload(self, video_path, course, my_class, tag_list, date):
+    def file_upload(self, video, course, my_class, tag_list):
         csrftoken = self.client.cookies['csrftoken']
+        print(video.date)
         payload = {'course_code': course.code, 'class_name': my_class.name, 'class_year': my_class.year, 
-                   'class_semester': my_class.semester, 'tags': 'teste', 'date': datetime.datetime.strptime(date, "%d%m%Y"), 
+                   'class_semester': my_class.semester, 'tags': 'teste', 'date': datetime.datetime.strptime(video.date, "%d-%m-%Y"), 
                    'csrfmiddlewaretoken': csrftoken}
         files = {
-             'file': (os.path.basename(video_path), open(video_path, 'rb'), 'application/octet-stream')
+             'file': (os.path.basename(ROOT + video.path), open(ROOT + video.path, 'rb'), 'application/octet-stream')
         }
 
         r = requests.post(BASE_URL + VIDEO_UPLOAD_URL, data=payload, files=files, headers=dict(Referer= BASE_URL + VIDEO_UPLOAD_URL))

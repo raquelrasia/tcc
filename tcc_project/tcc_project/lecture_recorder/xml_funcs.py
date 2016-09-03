@@ -30,21 +30,32 @@ def create_xml_video_file(course, my_class):
     return fname
 
 def add_video(video, fname):
+    my_class = video.my_class
+    course = my_class.course
+    print(my_class, course)
     tree = ET.parse(fname)
     root = tree.getroot()
-    video_et = ET.SubElement(root, 'video')
-    video_et.set('name', video.name)
-    video_et.set( 'path', video.file.name)
-    size = ET.SubElement(video_et, 'size')
-    size.text = str(video.file.size)
-    date = ET.SubElement(video_et, 'date')
-    date.text = str(video.date.strftime('%d-%m-%Y'))
-    f = open(fname, 'w')
-    ET.tostring(root)
-    #prettify(video_et)
-    #f.write(ET.tostring(root))
-    f.write(ET.tostring(root))#ET.tostring(root))
-    f.close()
+    existing_class_course = False
+    for course_et in root.findall('course'):
+        if course_et.get('code') == course.code:
+            for class_et in course_et.findall('class'):
+                if my_class.name == class_et.get('name'):
+                    existing_class_course = True
+                    video_et = ET.SubElement(class_et, 'video')
+                    video_et.set('name', video.name)
+                    video_et.set( 'path', video.file.name)
+                    size = ET.SubElement(video_et, 'size')
+                    size.text = str(video.file.size)
+                    date = ET.SubElement(video_et, 'date')
+                    date.text = str(video.date.strftime('%d-%m-%Y'))
+
+    if existing_class_course:
+        f = open(fname, 'w')
+        ET.tostring(root)
+        #prettify(video_et)
+        #f.write(ET.tostring(root))
+        f.write(ET.tostring(root))#ET.tostring(root))
+        f.close()
 
 
 
@@ -97,14 +108,6 @@ def _add_class( course_node, my_class):
     semester = ET.SubElement(class_et, 'semester')
     semester.text = str(my_class.semester)
 
-
-def compare_files(f_remote, f_local, class_name, class_year, class_semester):
-    missing_files = list()
-    tree = ET.parse(f_remote)
-    root_remote = tree.getroot()
-
-
-    return missing_files
 
 def prettify(elem):
     """Return a pretty-printed XML string for the Element.

@@ -28,5 +28,6 @@
 *.out
 *.app
 
-djangofiles/djangobookmarks/djangobookmarks/files/
+tcc_project/tcc_project/tcc_project/files/
+tcc_project/tcc_project/client/files/
 *.pyc

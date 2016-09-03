@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from django.views.generic import TemplateView
-from bookmarks.views import *
+from lecture_recorder.views import *
 import os.path
 
 
@@ -11,7 +11,7 @@ videos = os.path.join(os.path.dirname(__file__), 'videos')
 
 urlpatterns = patterns('',
     # Examples:
-    # url(r'^$', 'djangobookmarks.views.home', name='home'),
+    # url(r'^$', 'tcc_project.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^$', main_page),

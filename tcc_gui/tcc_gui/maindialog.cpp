@@ -36,6 +36,9 @@ MainDialog::MainDialog(QWidget *parent) :
     ui->pushButton_2->setEnabled(false);
     ui->pushButton_4->setEnabled(false);
 
+    // Configures DOCUMENT CAMERA push button
+    ui->pushButton_5->setEnabled(false);
+
     // Configures STATUS label
     ui->label->setStyleSheet("color: red") ;
     ui->label->setText("Status: NOT RECORDING") ;
@@ -49,6 +52,8 @@ MainDialog::MainDialog(QWidget *parent) :
     dialog_ended = false ;
     number_of_recordings = 0 ;
     fps = "1" ;
+    audio_file_extension = QString(".mp3") ;
+    video_file_extension = QString(".mkv") ;
 
 }
 
@@ -72,19 +77,37 @@ void MainDialog::on_pushButton_clicked()
     // is prompted to choose the directory on which
     // he/she wants the recording to be saved
     if (!(ui->checkBox_2->isChecked())){
-        MyDialog mDialog ;
-        mDialog.setModal(true) ;
-        mDialog.exec() ;
+        MyCourseDialog mcDialog ;
+        mcDialog.set_dir_mode(false) ;
+        mcDialog.setModal(true) ;
+        mcDialog.exec() ;
 
-        if(mDialog.get_dialog_ended()) {
-            dialog_ended = mDialog.get_dialog_ended() ;
+        if(mcDialog.get_dialog_ended()) {
+            course_code = mcDialog.get_current_course() ;
+            class_code = mcDialog.get_current_class() ;
+
+            autopath_dialog_ended = mcDialog.get_dialog_ended() ;
             ui->pushButton->setEnabled(false);
             ui->pushButton_3->setEnabled(true);
             ui->pushButton_2->setEnabled(true);
+            ui->pushButton_5->setEnabled(true);
+            ui->checkBox_2->setEnabled(false);
 
-            path = mDialog.get_path() ;
-            filename = mDialog.get_filename() ;
-            video_file_extension = mDialog.get_file_extension() ;
+            semester = mcDialog.get_current_semester() ;
+            filename = mcDialog.get_filename() ;
+
+            MyDialog mDialog ;
+            mDialog.setModal(true) ;
+            mDialog.exec() ;
+
+            if(mDialog.get_dialog_ended()) {
+                dialog_ended = mDialog.get_dialog_ended() ;
+                ui->pushButton->setEnabled(false);
+                ui->pushButton_3->setEnabled(true);
+                ui->pushButton_2->setEnabled(true);
+
+                rec_dir = mDialog.get_rec_dir() ;
+            }
         }
     }
 
@@ -105,17 +128,19 @@ void MainDialog::on_pushButton_clicked()
             ui->pushButton->setEnabled(false);
             ui->pushButton_3->setEnabled(true);
             ui->pushButton_2->setEnabled(true);
+            ui->pushButton_5->setEnabled(true);
+            ui->checkBox_2->setEnabled(false);
 
-            path = mcDialog.get_path() ;
+            rec_dir = mcDialog.get_rec_dir() ;
+            dir_videos = mcDialog.get_dir_videos() ;
+            semester = mcDialog.get_current_semester() ;
             filename = mcDialog.get_filename() ;
-            video_file_extension = mcDialog.get_file_extension() ;
-
-            qDebug() << path << filename << video_file_extension ;
         }
-
-
     }
+
+    qDebug() << course_code << class_code << semester << rec_dir << filename << video_file_extension << audio_file_extension ;
 }
+
 
 
 /************* PUSH_BUTTON *************/
@@ -123,10 +148,59 @@ void MainDialog::on_pushButton_clicked()
 void MainDialog::on_pushButton_3_clicked()
 {
 
-    if(QFileInfo::exists(path + filename + QString::number(1) + video_file_extension) ) {
+    if(QFileInfo::exists(rec_dir + filename + QString::number(1) + video_file_extension) ) {
+
+        if(ui->checkBox_2->isChecked()) {
+            /*********** Creates a .bat file with the transfer routine if autopath is used ***********/
+            QString transfer_cmds = QString("C:/Users/luigu/Desktop/tcc_gui/tcc_gui/transfer_test.bat") ;
+            QFile bat_file(transfer_cmds);
+                if (!bat_file.open(QIODevice::WriteOnly | QIODevice::Text))
+                    return;
+
+            QTextStream outcmds(&bat_file);
+            outcmds << "ssh pi@169.254.96.87 \"mkdir -p /home/pi/Videos/" << course_code + QString("/") +
+                    class_code + QString("/") + semester + QString("/") + "\"\n" +
+                    QString("pscp -pw raspberry ") + rec_dir + filename + video_file_extension + QString(" ") +
+                    rec_dir + filename + audio_file_extension +
+                    QString(" pi@169.254.96.87:Videos/") + course_code + QString("/") +
+                    class_code + QString("/") + semester + QString("/")  << "\n" ;
+            /**************************************************************************/
+        }
+
+        else {
+            /*********************************************************************************************/
+            /*********************************************************************************************/
+            /*********************************************************************************************/
+            /*********** Creates a .bat file with the transfer routine if autopath is NOT used ***********/
+            QString transfer_cmds = QString("C:/Users/luigu/Desktop/tcc_gui/tcc_gui/transfer_test.bat") ;
+            QFile bat_file(transfer_cmds);
+                if (!bat_file.open(QIODevice::WriteOnly | QIODevice::Text))
+                    return;
+
+            QTextStream outcmds(&bat_file);
+            outcmds << "ssh pi@169.254.96.87 \"mkdir -p /home/pi/Videos/" << course_code + QString("/") +
+                    class_code + QString("/") + semester + QString("/") + "\"\n" +
+                    QString("pscp -pw raspberry ") + rec_dir + filename + video_file_extension + QString(" ") +
+                    rec_dir + filename + audio_file_extension +
+                    QString(" pi@169.254.96.87:Videos/") + course_code + QString("/") +
+                    class_code + QString("/") + semester + QString("/")  << "\n" ;
+            /**************************************************************************/
+        }
+
+        /*********** Creates a .bat file to be transfered to the Raspberry Pi.  ***********/
+        /*********** This .bat file is eesponsible for concatenating audio and video files. ***********/
+        QString merge_cmds = QString("C:/Users/luigu/Desktop/tcc_gui/tcc_gui/merge_test.bat") ;
+        QFile merge_bat_file(merge_cmds);
+            if (!merge_bat_file.open(QIODevice::WriteOnly | QIODevice::Text))
+                return;
+
+        QTextStream out_merge_cmds(&merge_bat_file);
+        out_merge_cmds << "ffmpeg -i " + filename + video_file_extension + " -i " + filename + audio_file_extension +
+                          " -c:v copy -c:a copy " + filename + QString("_av") + video_file_extension << "\n" ;
+        /**************************************************************************/
 
         /*********** Creates a text file with the video files to be concatenated ***********/
-        QString video_list = path + QString("video_list.txt") ;
+        QString video_list = rec_dir + QString("video_list.txt") ;
         QFile filevideo(video_list);
             if (!filevideo.open(QIODevice::WriteOnly | QIODevice::Text))
                 return;
@@ -138,7 +212,7 @@ void MainDialog::on_pushButton_3_clicked()
         /****************************************************************************/
 
         /*********** Creates a text file with the audio files' to be concatenated ***********/
-        QString audio_list = path + QString("audio_list.txt") ;
+        QString audio_list = rec_dir + QString("audio_list.txt") ;
         QFile fileaudio(audio_list);
             if (!fileaudio.open(QIODevice::WriteOnly | QIODevice::Text))
                 return;
@@ -159,41 +233,45 @@ void MainDialog::on_pushButton_3_clicked()
                         << "-f"
                         << "concat"
                         << "-i"
-                        << path + QString("video_list.txt")
+                        << rec_dir + QString("video_list.txt")
                         << "-c"
                         << "copy"
                         << "-an"
-                        << path + filename + video_file_extension
+                        << rec_dir + filename + video_file_extension
 
                         /******************** Audio ********************/
                         << "-f"
                         << "concat"
                         << "-i"
-                        << path + QString("audio_list.txt")
+                        << rec_dir + QString("audio_list.txt")
                         << "-c"
                         << "copy"
-                        << path + filename + ".mp3" ;
+                        << rec_dir + filename + audio_file_extension ;
 
         //connect(ffmpeg_cat, SIGNAL(finished(int,QProcess::ExitStatus)), ffmpeg_cat, SLOT(deleteLater())) ;
         ffmpeg_cat->startDetached("ffmpeg", ffmpeg_cat_args) ;
         ffmpeg_cat->waitForFinished() ;
         ffmpeg_cat->close();
-        qDebug() << ffmpeg_cat->state() ;
-        qDebug() << ffmpeg_process->state() ;
         /**************************************************************************/
-
     }
 
     ui->pushButton->setEnabled(true) ;
     ui->pushButton_2->setEnabled(false) ;
     ui->pushButton_3->setEnabled(false) ;
     ui->pushButton_4->setEnabled(false) ;
+    ui->pushButton_5->setEnabled(false) ;
+    ui->checkBox_2->setEnabled(true);
     ui->label->setStyleSheet("color: orange");
+    ui->label->setText("Status: Lecture Finished");
+
+    transfer = new QProcess(this) ;
+    transfer->startDetached("C:/Users/luigu/Desktop/tcc_gui/tcc_gui/transfer_test.bat") ;
+
     ui->label->setText("Status: Lecture Finished");
 
     /*********** Displays message asking if user wants to upload video now ***********/
     QMessageBox msgBox ;
-    msgBox.setInformativeText("Do you wish to upload the lecture now?") ;
+    msgBox.setInformativeText("Do you wish to transfer the files now?") ;
     msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     msgBox.setDefaultButton(QMessageBox::Yes);
     int ret = msgBox.exec();
@@ -202,11 +280,11 @@ void MainDialog::on_pushButton_3_clicked()
         /****** Removes trash files, i.e., the text aux files and the video and ******/
         /****** audio files before concatenation ******/
         for (uint8_t count = 1; count <= number_of_recordings; count++) {
-            QFile::remove(path + filename + QString::number(count) + video_file_extension) ;
-            QFile::remove(path + filename + QString::number(count) + ".mp3") ;
+            QFile::remove(rec_dir + filename + QString::number(count) + video_file_extension) ;
+            QFile::remove(rec_dir + filename + QString::number(count) + ".mp3") ;
         }
-        QFile::remove(path + "audio_list.txt") ;
-        QFile::remove(path + "video_list.txt") ;
+        QFile::remove(rec_dir + "audio_list.txt") ;
+        QFile::remove(rec_dir + "video_list.txt") ;
 
         /**************** Upload Routine Here ****************/
         /**************** Upload Routine Here ****************/
@@ -218,11 +296,11 @@ void MainDialog::on_pushButton_3_clicked()
         /****** Removes trash files, i.e., the text aux files and the video and ******/
         /****** audio files before concatenation ******/
         for (uint8_t count = 1; count <= number_of_recordings; count++) {
-            QFile::remove(path + filename + QString::number(count) + video_file_extension) ;
-            QFile::remove(path + filename + QString::number(count) + ".mp3") ;
+            QFile::remove(rec_dir + filename + QString::number(count) + video_file_extension) ;
+            QFile::remove(rec_dir + filename + QString::number(count) + ".mp3") ;
         }
-        QFile::remove(path + "audio_list.txt") ;
-        QFile::remove(path + "video_list.txt") ;
+        QFile::remove(rec_dir + "audio_list.txt") ;
+        QFile::remove(rec_dir + "video_list.txt") ;
     }
 }
 
@@ -247,15 +325,14 @@ void MainDialog::on_pushButton_2_clicked()
     ui->pushButton_4->setEnabled(true);
     ui->pushButton_2->setEnabled(false);
     ui->pushButton_3->setEnabled(false);
+    ui->pushButton_5->setEnabled(true);
     ui->checkBox->setEnabled(false);
 
     /************** Process used to call ffmpeg from terminal **************/
     ffmpeg_process = new QProcess(this) ;
     QStringList ffmpeg_args ;
 
-    full_path = path + filename + QString::number(number_of_recordings) ;
-
-    qDebug() << full_path ;
+    full_path = rec_dir + filename + QString::number(number_of_recordings) ;
 
                 /************ Video ************/
     ffmpeg_args << "-y"
@@ -278,17 +355,17 @@ void MainDialog::on_pushButton_2_clicked()
                 << "-f"
                 << "dshow"
                 << "-i"
-                << "audio=Microphone (Parallels Audio Controller)"
+                << "audio=Internal Microphone (Cirrus Logic CS4208 (AB 94))"
                 //<< "-ac"
                 //<< "2"
                 << "-acodec"
                 << "libmp3lame"
                 << "-qscale:a"
                 << "9"
-                << full_path + ".mp3" ;
+                << full_path + audio_file_extension ;
 
 
-    qDebug() << ffmpeg_args ;
+    //qDebug() << ffmpeg_args ;
 
     /* Useful for recording on Linux
      * ffmpeg -framerate 25 -video_size 1024x768 -f x11grab -i :0.0+100,200 -f
@@ -318,5 +395,29 @@ void MainDialog::on_pushButton_4_clicked() {
     ffmpeg_process->setProcessChannelMode(QProcess::ForwardedChannels);
     ffmpeg_process->write("q");
     ffmpeg_process->closeWriteChannel();
+
+}
+
+
+/************* PUSH_BUTTON *************/
+// Defines behaviour of the "DOCUMENT CAMERA" push button
+void MainDialog::on_pushButton_5_clicked()
+{
+    ui->label->setStyleSheet("color: orange") ;
+    ui->label->setText("Status: CAMERA DOCUMENT ON");
+
+    netcat_mplayer_client = new QProcess(this) ;
+    netcat_mplayer_client->startDetached("C:/Users/luigu/Desktop/tcc_gui/tcc_gui/netcat_mplayer_client.bat") ;
+
+    rpi_cam = new QProcess(this) ;
+    rpi_cam->start("C:/Users/luigu/Desktop/tcc_gui/tcc_gui/rpi_cam.bat") ;
+
+}
+
+
+void MainDialog::on_pushButton_6_clicked() {
+    upload = new QProcess(this) ;
+    upload->start("C:/Users/luigu/Desktop/tcc_gui/tcc_gui/transfer_test.bat") ;
+    upload->waitForFinished(-1) ;
 
 }

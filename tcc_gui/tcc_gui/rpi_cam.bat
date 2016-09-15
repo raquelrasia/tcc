@@ -1,0 +1,1 @@
+bash -c plink -ssh pi@169.254.96.87 -pw raspberry "raspivid -t 0 -w 640 -h 480 -hf -fps 30 -o - | nc 169.254.100.100 2222"

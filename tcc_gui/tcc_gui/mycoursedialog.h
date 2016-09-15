@@ -19,18 +19,20 @@ public:
 
     QString get_current_course() ;
     QString get_current_class() ;
-    bool get_dialog_ended() ;
-    QString get_path() ;
+    QString get_current_semester() ;
+    QString get_rec_dir() ;
+    QString get_dir_videos() ;
     QString get_filename() ;
-    QString get_file_extension() ;
+
+    void set_dir_mode(bool mode) ;
+
+    bool get_dialog_ended() ;
 
 private slots:
 
     void on_pushButton_2_clicked();
     void on_pushButton_clicked();
     void on_listWidget_itemSelectionChanged();
-
-
     void on_listWidget_2_itemSelectionChanged();
 
 private:
@@ -44,10 +46,14 @@ private:
 
     QString CurrentCourse ;
     QString CurrentClass ;
-    QString path ;
+    QString dir_videos ;
+
+    bool autopath ;
+
+    // Directory of the recording
+    QString rec_dir ;
     QString semester ;
     QString filename ;
-    QString file_extension ;
 
     QDate date ;
 

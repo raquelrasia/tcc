@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>640</width>
-    <height>480</height>
+    <width>644</width>
+    <height>317</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
      <x>10</x>
      <y>0</y>
      <width>621</width>
-     <height>441</height>
+     <height>301</height>
     </rect>
    </property>
    <property name="title">
@@ -28,9 +28,9 @@
    <widget class="QPushButton" name="pushButton">
     <property name="geometry">
      <rect>
-      <x>250</x>
-      <y>390</y>
-      <width>101</width>
+      <x>100</x>
+      <y>230</y>
+      <width>111</width>
       <height>41</height>
      </rect>
     </property>
@@ -81,6 +81,32 @@
       </layout>
      </item>
     </layout>
+   </widget>
+   <widget class="QPushButton" name="ContinueSession">
+    <property name="geometry">
+     <rect>
+      <x>370</x>
+      <y>230</y>
+      <width>111</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Continue Session</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="expire_label">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>180</y>
+      <width>341</width>
+      <height>44</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Your session will soon expire. Login to renew your session</string>
+    </property>
    </widget>
   </widget>
  </widget>

@@ -14,7 +14,7 @@ class MyCourseDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit MyCourseDialog(QWidget *parent = 0);
+    explicit MyCourseDialog(QWidget *parent = 0, QString xml_path = " ");
     ~MyCourseDialog();
 
     QString get_current_course() ;
@@ -41,11 +41,15 @@ private:
     QStringList CourseList ;
     QStringList CourseIDList ;
     QStringList CurrentClassList ;
+    QStringList ClassesNamesList;
+    QStringList YearsNamesList;
+    QStringList SemestersNamesList;
 
     QString CurrentCourse ;
     QString CurrentClass ;
     QString path ;
     QString semester ;
+    QString year ;
     QString filename ;
     QString file_extension ;
 

@@ -60,21 +60,16 @@ QString MyCourseDialog::get_file_extension() {
 }
 
 /************* CONSTRUCTOR METHOD *************/
-MyCourseDialog::MyCourseDialog(QWidget *parent) :
+MyCourseDialog::MyCourseDialog(QWidget *parent, QString xml_path) :
     QDialog(parent),
     ui(new Ui::MyCourseDialog)
 {
     ui->setupUi(this);
     this->setWindowTitle("Choose course and class");
-
+    QString CourseNamesCode;
     // Uses Dom Model to open XML
     QDomDocument document ;
-
-    /******************* PEGAR .XML DO SITE *******************/
-    /******************* PEGAR .XML DO SITE *******************/
-    QFile file("C:/Users/luisribeiro/Documents/tcc/tcc_teste/tcc_teste/courses.xml") ;
-    /******************* PEGAR .XML DO SITE *******************/
-    /******************* PEGAR .XML DO SITE *******************/
+    QFile file(xml_path) ;
 
     // Performs some tests on the file
     if(!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -89,13 +84,17 @@ MyCourseDialog::MyCourseDialog(QWidget *parent) :
 
     // gets the root element
     root = document.firstChildElement() ;
-
+    QDomElement teacher = root.firstChildElement() ;
     // gets the course_names for a given lecturer
-    CourseList = getEntry(root, "Course", "Name") ;
-    CourseIDList = getEntry(root, "Course", "ID") ;
+    CourseList = getEntry(teacher, "course", "name") ;
+    CourseIDList = getEntry(teacher, "course", "code") ;
 
     for(uint8_t i = 0; i < CourseList.size(); i++) {
-        ui->listWidget->addItem(CourseList.at(i));
+        CourseNamesCode.append(CourseList.at(i));
+        CourseNamesCode.append(" - ");
+        CourseNamesCode.append(CourseIDList.at(i));
+        ui->listWidget->addItem(CourseNamesCode);
+        CourseNamesCode.clear();
     }
 
     // Selects the first course by default
@@ -106,23 +105,7 @@ MyCourseDialog::MyCourseDialog(QWidget *parent) :
     // happening with CurrentRow return value
     ui->listWidget->setCurrentRow(0);
     ui->listWidget_2->setCurrentRow(0);
-
-    date = QDate::currentDate() ;
-
-    if(date.month() <= 7) {
-        semester = QString::number(date.year()) + "_" + "1" ;
-    }
-    else {
-        semester = QString::number(date.year()) + "_" + "2" ;
-    }
-
-
-    // The new file will be named after the current date,
-    // e.g., 27_08_2016.mkv
-    filename = date.toString("dd_MM_yyyy") ;
-
-    // File extension
-    file_extension = ".mkv" ;
+    qDebug() << CourseList.size();
 
     dialog_ended = false ;
 }
@@ -142,18 +125,48 @@ void MyCourseDialog::on_listWidget_itemSelectionChanged()
     ui->listWidget_2->clear();
     CurrentClassList.clear();
 
+    QDomElement teacher = root.firstChildElement() ;
     // Class Selection Section
-    QDomNodeList courses = root.elementsByTagName("Course") ;
-
+    QDomNodeList courses = teacher.elementsByTagName("course") ;
     // Solves a weird bug where currentRow() returns -1 (why, God?!)
     if(ui->listWidget->currentRow() == -1) {
         ui->listWidget->setCurrentRow(0) ;
     }
-
     // Gets the Code for a given class, e.g., S11, S71, S43, etc
     if(courses.at(ui->listWidget->currentRow()).isElement()) {
-        CurrentClassList << getEntry(courses.at(ui->listWidget->currentRow()).toElement(), "Class", "Code");
+        ClassesNamesList << getEntry(courses.at(ui->listWidget->currentRow()).toElement(), "class", "name");
+        YearsNamesList << getEntry(courses.at(ui->listWidget->currentRow()).toElement(), "class", "year");
+        SemestersNamesList << getEntry(courses.at(ui->listWidget->currentRow()).toElement(), "class", "semester");
     }
+
+    QString current_class;
+    for(uint8_t i = 0; i < ClassesNamesList.size(); i++) {
+       current_class.append(ClassesNamesList.at(i));
+       current_class.append(" ");
+       current_class.append(YearsNamesList.at(i));
+       current_class.append("/");
+       current_class.append(SemestersNamesList.at(i));
+       qDebug() << current_class;
+       CurrentClassList << current_class;
+       current_class.clear();
+    }
+    
+    date = QDate::currentDate() ;
+
+    if(date.month() <= 7) {
+        semester = QString::number(date.year()) + "_" + "1" ;
+    }
+    else {
+        semester = QString::number(date.year()) + "_" + "2" ;
+    }
+
+
+    // The new file will be named after the current date,
+    // e.g., 27_08_2016.mkv
+    filename = date.toString("dd_MM_yyyy") ;
+    // File extension
+    file_extension = ".mkv" ;
+
 
     // Adds the class code to the ListWidget
     for(uint8_t i = 0; i < CurrentClassList.size(); i++) {
@@ -171,7 +184,9 @@ void MyCourseDialog::on_listWidget_2_itemSelectionChanged()
     if(ui->listWidget_2->currentRow() == -1) {
         ui->listWidget_2->setCurrentRow(0);
     }
-    CurrentClass = CurrentClassList.at(ui->listWidget_2->currentRow()) ;
+    CurrentClass = ClassesNamesList.at(ui->listWidget_2->currentRow()) ;
+    semester = SemestersNamesList.at(ui->listWidget_2->currentRow());
+    year = YearsNamesList.at(ui->listWidget_2->currentRow());
 }
 
 /************* PUSH_BUTTON *************/
@@ -196,8 +211,9 @@ void MyCourseDialog::on_pushButton_2_clicked()
     path = path + CurrentCourse + "/" ;
     dir.mkpath(path + CurrentClass) ;
     path = path + CurrentClass + "/" ;
-    dir.mkpath(path + semester) ;
-    path = path + semester + "/" ;
+    dir.mkpath(path + year+"_"+semester) ;
+    path = path + year+"_"+semester + "/" ;
+    
 }
 
 /************* PUSH_BUTTON *************/

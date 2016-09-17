@@ -38,6 +38,7 @@ urlpatterns = patterns('',
     url(r'^api/teacher_xml_download/$', api_return_teacher_info),
     url(r'^api/video_xml_download/$', api_return_videos_file), 
     url(r'^class/(\w+)/class_save/$', class_save_page),
-    url(r'^class/(\w+)/(\w+)/$', class_page),   
+    url(r'^class/(\w+)/(\w+)/(\w+)/(\w+)/$', class_page),   
     url(r'^index/$', index),
+    url(r'^api/login/$', api_login),
 )

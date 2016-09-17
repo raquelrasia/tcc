@@ -344,17 +344,26 @@ def class_save_page(request, course_code):
         if request.method == 'POST':
             form = ClassSaveForm(request.POST, request.FILES)
             if form.is_valid():
-                my_class = Class(name = form.cleaned_data['name'])
-                my_class.year = form.cleaned_data['year']
-                my_class.semester = form.cleaned_data['semester']
-                my_class.user_teacher = request.user
-                course.class_set.add(my_class)
-                #caso seja professorclass_set
-                create_xml_teacher_file(request.user)
-                add_course_class(course, my_class, request.user)
-                return HttpResponseRedirect(
-                        '/class/{}/{}'.format(course_code, my_class.name) #% course_code, class.name
-                    )
+                my_class, created = Class.objects.get_or_create(name = form.cleaned_data['name'],
+                                                                year = form.cleaned_data['year'], 
+                                                                semester = form.cleaned_data['semester'])
+                                                                                                                       
+                                                             
+                # my_class = Class(name = form.cleaned_data['name'])
+                # my_class.year = form.cleaned_data['year']
+                # my_class.semester = form.cleaned_data['semester']
+                if created:
+                    course.class_set.add(my_class)
+                    my_class.user_teacher = request.user
+                    my_class.save()
+                    #caso seja professorclass_set
+                    create_xml_teacher_file(request.user)
+                    add_course_class(course, my_class, request.user)
+                    return HttpResponseRedirect(
+                            '/class/{}/{}/{}/{}/'.format(course_code, my_class.name, my_class.year, my_class.semester)
+                        )
+                else:
+                    form = ClassSaveForm() 
         else:
             form = ClassSaveForm()
         variables = RequestContext(request, 
@@ -367,12 +376,18 @@ def class_save_page(request, course_code):
     else:
         return HttpResponseRedirect('/')
 
-def class_page(request, course_code, class_code):
+def class_page(request, course_code, class_code, class_year, class_semester):
     try:
         course = Course.objects.get(code = course_code)
-        my_class = course.class_set.get(name = class_code)
     except:
-        raise Http404('Disciplina/Class nao encontrada.')
+        raise Http404('Disciplina nao encontrada.')
+
+    try:
+        my_class = course.class_set.get(name = class_code, 
+                                        year = class_year,
+                                        semester = class_semester)
+    except:
+        raise Http404('Turma nao encontrada.')
 
     videos = my_class.video_set.all()
     variables = RequestContext (request, {
@@ -427,7 +442,6 @@ def index(request):
 @csrf_exempt
 def api_video_upload(request):
     if request.method == 'POST':
-        print('hehehe')
         form = VideoUploadForm_API(request.POST, request.FILES)
         if form.is_valid():
             video = Video(file = request.FILES['file'])
@@ -488,6 +502,24 @@ def api_return_teacher_info(request):
     xml_file.close()
     return response
 
+@csrf_exempt
+def api_login(request):
+    if request.method == 'POST':
+        form = LoginApiForm(request.POST)
+        if form.is_valid():
+            if form.cleaned_data.has_key('username') and form.cleaned_data.has_key('password'):
+                    username = form.cleaned_data['username']
+                    password = form.cleaned_data['password']
+                    user = authenticate(username=username, password=password)
+                    if user is not None:
+                        #autenticacao correta
+                        return HttpResponse(1)
+                    else:
+                        #autenticacao incorreta
+                        return HttpResponse(-1)
+
+    return HttpResponse(0)
+
 def api_return_videos_file(request):
     try:
         course_code = request.GET['course_code']
@@ -517,7 +549,7 @@ def api_return_videos_file(request):
     file_name =  file_name + name + '.xml' 
     xml_file = open(file_name, 'r')
     path_to_file = os.path.dirname(file_name)
-    response = HttpResponse(xml_file.read() ,content_type='application/xml') # mimetype is replaced by content_type for django 1.7
+    response = HttpResponse(xml_file.read() , content_type='application/xml') # mimetype is replaced by content_type for django 1.7
     response['Content-Disposition'] = 'attachment; filename=%s' % file_name
     response['Content-Length'] = os.path.getsize(file_name)
     xml_file.close()

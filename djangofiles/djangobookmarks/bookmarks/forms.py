@@ -89,6 +89,11 @@ class VideoUploadForm_API(forms.Form):
 	class_year = forms.CharField()
 	class_semester = forms.CharField()
 
+
+class LoginApiForm(forms.Form):
+	username = forms.CharField()
+	password = forms.CharField()
+	
 class ClassSaveForm(forms.Form):
 	name = forms.CharField(
 		label = 'Nome',

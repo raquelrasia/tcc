@@ -28,5 +28,8 @@
 *.out
 *.app
 
-djangofiles/djangobookmarks/djangobookmarks/files/
+tcc_project/tcc_project/tcc_project/files/
+tcc_project/tcc_project/client/files/
+tcc_gui/build-tcc_gui-Functional_Desktop_Qt_5_6_1_MSVC2015_64bit-Debug/
+tcc_gui/tcc_gui/client/
 *.pyc

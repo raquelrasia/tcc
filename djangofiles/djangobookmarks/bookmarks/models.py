@@ -37,7 +37,7 @@ class Class(models.Model):
     year = models.PositiveIntegerField()
     #year = models.CharField(max_length = 4)
     semester = models.CharField(max_length = 1)
-    course  = models.ForeignKey(Course)
+    course  = models.ForeignKey(Course, null = True)
     user_teacher = models.ForeignKey(User, null = True)
 
     def __str__(self):

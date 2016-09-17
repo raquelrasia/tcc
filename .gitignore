@@ -31,3 +31,14 @@
 tcc_project/tcc_project/tcc_project/files/
 tcc_project/tcc_project/client/files/
 *.pyc
+tcc_gui/build-tcc_gui-Functional_Desktop_Qt_5_6_1_MSVC2015_64bit-Debug/Makefile
+tcc_gui/build-tcc_gui-Functional_Desktop_Qt_5_6_1_MSVC2015_64bit-Debug/Makefile.Debug
+tcc_gui/build-tcc_gui-Functional_Desktop_Qt_5_6_1_MSVC2015_64bit-Debug/Makefile.Release
+tcc_gui/build-tcc_gui-Functional_Desktop_Qt_5_6_1_MSVC2015_64bit-Debug/debug/moc_logindialog.cpp
+tcc_gui/build-tcc_gui-Functional_Desktop_Qt_5_6_1_MSVC2015_64bit-Debug/debug/moc_maindialog.cpp
+tcc_gui/build-tcc_gui-Functional_Desktop_Qt_5_6_1_MSVC2015_64bit-Debug/debug/moc_mycoursedialog.cpp
+tcc_gui/build-tcc_gui-Functional_Desktop_Qt_5_6_1_MSVC2015_64bit-Debug/debug/moc_mydialog.cpp
+tcc_gui/build-tcc_gui-Functional_Desktop_Qt_5_6_1_MSVC2015_64bit-Debug/ui_logindialog.h
+tcc_gui/build-tcc_gui-Functional_Desktop_Qt_5_6_1_MSVC2015_64bit-Debug/ui_maindialog.h
+tcc_gui/build-tcc_gui-Functional_Desktop_Qt_5_6_1_MSVC2015_64bit-Debug/ui_mycoursedialog.h
+tcc_gui/build-tcc_gui-Functional_Desktop_Qt_5_6_1_MSVC2015_64bit-Debug/ui_mydialog.h

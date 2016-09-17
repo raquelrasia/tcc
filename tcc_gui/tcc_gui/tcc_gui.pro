@@ -17,14 +17,19 @@ SOURCES += main.cpp\
         logindialog.cpp \
     mycoursedialog.cpp \
     mydialog.cpp \
-    maindialog.cpp
+    maindialog.cpp \
+    networkconnection.cpp
 
 HEADERS  += logindialog.h \
     mycoursedialog.h \
     mydialog.h \
-    maindialog.h
+    maindialog.h \
+    networkconnection.h
 
 FORMS    += logindialog.ui \
     mycoursedialog.ui \
     mydialog.ui \
     maindialog.ui
+    
+CONFIG += c++11
+QT += network

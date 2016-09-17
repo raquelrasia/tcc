@@ -63,12 +63,12 @@ class XMLHandler():
     def create_xml_teacher_file(self, user): 
         f_name = MEDIA_ROOT +'teachers/'+ user.username
         fname =  f_name + '.xml'
-        if os.path.exists(fname):
+        if os.path.exists(fname) and os.path.size(fname) != 0:
             return fname
         else:
             if not os.path.exists(os.path.dirname(fname)):
                 os.makedirs(os.path.dirname(fname))
-            root = ET.Element('root')
+        root = ET.Element('root')
         f = open(fname, 'w')
         teacher_et = ET.SubElement(root, 'teacher')
         teacher_et.set('username', user.username)
@@ -104,11 +104,15 @@ class XMLHandler():
     def _add_class(self, course_node, my_class):
         class_et =  ET.SubElement(course_node, 'class')
         class_et.set('name', my_class.name)
-        year = ET.SubElement(class_et, 'year')
-        year.text = str(my_class.year)
-        semester = ET.SubElement(class_et, 'semester')
-        semester.text = str(my_class.semester)
-
+        class_et.set('year', str(my_class.year))
+        class_et.set('semester', str(my_class.semester))
+        
+    def prettify(elem):
+        """Return a pretty-printed XML string for the Element.
+        """
+        rough_string = ET.tostring(elem, 'utf-8')
+        reparsed = minidom.parseString(rough_string)
+        return reparsed.toprettyxml(indent="  ")
 
     def compare_files(self, f_remote, f_local, course, my_class):
         print(os.path.abspath(f_remote))
@@ -158,10 +162,3 @@ class XMLHandler():
             return -2
 
         return video_list
-
-    def prettify(elem):
-        """Return a pretty-printed XML string for the Element.
-        """
-        rough_string = ET.tostring(elem, 'utf-8')
-        reparsed = minidom.parseString(rough_string)
-        return reparsed.toprettyxml(indent="  ")

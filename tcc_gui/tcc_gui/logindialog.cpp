@@ -14,7 +14,7 @@ LoginDialog::LoginDialog(QWidget *parent) :
     path = path + "teacher_info/" ;
     QString filename = "auth_info.xml";
     auth_file_path = path + filename;
-    int days_expire;
+    int days_expire = 50;
     bool ask_login = read_auth_xml(&username, &days_expire);
     if (!ask_login)
     {

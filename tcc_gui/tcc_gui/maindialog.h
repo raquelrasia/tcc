@@ -25,6 +25,7 @@ public:
     explicit MainDialog(QWidget *parent = 0);
     ~MainDialog();
     bool fileExists(QString path) ;
+    void set_xml_path( QString path);
 
 private slots:
     void on_pushButton_clicked();
@@ -44,6 +45,7 @@ private:
     QString course_code ;
     QString class_code ;
     QString fps ; // Frames per second
+    QString xml_path;
 
     uint8_t number_of_recordings ;
 

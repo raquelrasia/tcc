@@ -94,6 +94,7 @@ void MainDialog::on_pushButton_clicked()
     // directory
     else {
         MyCourseDialog mcDialog ;
+        MyCourseDialog mcDialog(0, xml_path) ;
         mcDialog.setModal(true) ;
         mcDialog.exec() ;
 
@@ -320,3 +321,9 @@ void MainDialog::on_pushButton_4_clicked() {
     ffmpeg_process->closeWriteChannel();
 
 }
+
+ void MainDialog::set_xml_path(QString path)
+ {
+    xml_path = path;
+    qDebug()<< xml_path;
+ }

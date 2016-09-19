@@ -25,7 +25,7 @@ void LoginDialog::on_pushButton_clicked()
     /************ LOGIN DATA ROUTINE HERE ************/
     /************ LOGIN DATA ROUTINE HERE ************/
 
-    if(username == "user" && password == "12345") {
+    if(username == "" && password == "") {
         close() ;
         MainDialog mdialog ;
         mdialog.setModal(true);

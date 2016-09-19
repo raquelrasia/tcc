@@ -122,8 +122,6 @@ void MyDialog::on_pushButton_2_clicked()
     // This flag is used to check when the
     // program has successfully reached this point
     dialog_ended = close() ;
-
-    qDebug() << rec_dir ;
 }
 
 

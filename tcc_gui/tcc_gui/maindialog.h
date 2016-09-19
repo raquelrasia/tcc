@@ -14,6 +14,7 @@
 #include <QMessageBox>
 #include <QNetworkInterface>
 #include <QMutex>
+#include <QCloseEvent>
 
 namespace Ui {
 class MainDialog;
@@ -27,6 +28,7 @@ public:
     explicit MainDialog(QWidget *parent = 0);
     ~MainDialog();
     bool fileExists(QString path) ;
+    void closeEvent(QCloseEvent *event);
 
 private slots:
     void on_pushButton_clicked();
@@ -34,18 +36,15 @@ private slots:
     void on_pushButton_3_clicked();
     void on_pushButton_4_clicked();
     void on_pushButton_5_clicked();
-
-
     void on_pushButton_6_clicked();
 
 private:
     Ui::MainDialog *ui;
     QProcess * ffmpeg_process ;
-    QProcess * ffmpeg_cat ;
-    QProcess * netcat_mplayer_client ;
-    QProcess * rpi_cam ;
-    QProcess * upload ;
-    QProcess * transfer ;
+    //QProcess * ffmpeg_cat ;
+    //QProcess * netcat_mplayer_client ;
+    //QProcess * rpi_cam ;
+    //QProcess * transfer ;
 
     // Recording directory
     QString rec_dir ;
@@ -61,6 +60,7 @@ private:
     QString class_code ;
     QString semester ;
     QString fps ; // Frames per second
+    QString program_dir ;
 
     uint8_t number_of_recordings ;
 

@@ -7,19 +7,13 @@ LoginDialog::LoginDialog(QWidget *parent) :
 {
     ui->setupUi(this);
     this->setWindowTitle("Login");
-    // ---- change to config path ----//
-    QString path = QStandardPaths::writableLocation(QStandardPaths::MoviesLocation) + QString("/") ;
-    QDir dir(path) ;
-    dir.mkpath(path + "teacher_info") ;
-    path = path + "teacher_info/" ;
-    QString filename = "auth_info.xml";
-    auth_file_path = path + filename;
+    auth_file_path =  make_xml_path() + "auth_info.xml";
     int days_expire = 50;
     bool ask_login = read_auth_xml(&username, &days_expire);
     if (!ask_login)
     {
         close() ;
-        QString xml_path = make_xml_path();
+        QString xml_path = make_xml_path() + username + ".xml";
         MainDialog mdialog ;
         mdialog.set_xml_path(xml_path);
         mdialog.setModal(true);
@@ -51,10 +45,11 @@ void LoginDialog::on_pushButton_clicked()
     QString username = ui->lineEdit->text() ;
     QString password = ui->lineEdit_2->text() ;
 
+
     NetworkConnection connection;
     //int errorCode = connection.loginRequest(username, password);
     int errorCode = -1;
-    QString xml_path = make_xml_path();
+    QString xml_path = make_xml_path() + username + ".xml";
     errorCode = connection.loginRequest(username, password);
     if(errorCode == NO_ERROR_CODE) {
         close() ;
@@ -80,18 +75,15 @@ void LoginDialog::closeEvent(QCloseEvent *event) {
 
 QString LoginDialog::make_xml_path()
 {
-    QString filename = username + ".xml";
-    QString path = QStandardPaths::writableLocation(QStandardPaths::MoviesLocation) + QString("/") ;
+    QString path = QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + QString("/") + QString("LectureRecording/");
     QDir dir(path) ;
-    dir.mkpath(path + "teacher_info") ;
-    path = path + "teacher_info/" ;
-    QString xml_path = path+filename;
-    return xml_path;
+    dir.mkpath(path + "config/") ;
+    path = path + "config/" ;
+    return path;
 }
 
 void LoginDialog::write_auth_xml()
 {
-
     QDate date = QDate::currentDate();
     QString date_string = date.toString("dd_MM_yyyy") ;
 
@@ -194,7 +186,7 @@ bool LoginDialog::read_auth_xml(QString * username, int * days_expire)
 void LoginDialog::on_ContinueSession_clicked()
 {
         close() ;
-        QString xml_path = make_xml_path();
+        QString xml_path = make_xml_path() + username + ".xml";;
         MainDialog mdialog ;
         mdialog.set_xml_path(xml_path);
         mdialog.setModal(true);

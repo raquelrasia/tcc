@@ -36,6 +36,12 @@ QString MyCourseDialog::get_current_class(){
 }
 
 /************* AUX METHOD *************/
+// returns current semester
+QString MyCourseDialog::get_current_semester(){
+    return semester ;
+}
+
+/************* AUX METHOD *************/
 // returns state for current dialog.
 bool MyCourseDialog::get_dialog_ended() {
     return dialog_ended ;
@@ -43,8 +49,14 @@ bool MyCourseDialog::get_dialog_ended() {
 
 /************* AUX METHOD *************/
 // returns path
-QString MyCourseDialog::get_path() {
-    return path ;
+QString MyCourseDialog::get_rec_dir() {
+    return rec_dir ;
+}
+
+/************* AUX METHOD *************/
+// returns the user path
+QString MyCourseDialog::get_dir_videos(){
+    return dir_videos ;
 }
 
 /************* AUX METHOD *************/
@@ -54,9 +66,10 @@ QString MyCourseDialog::get_filename() {
 }
 
 /************* AUX METHOD *************/
-// returns the file extension
-QString MyCourseDialog::get_file_extension() {
-    return file_extension ;
+// Sets the directory mode. Autopath is enabled
+// if mode is true and manual if mode is false
+void MyCourseDialog::set_dir_mode(bool mode) {
+    autopath = mode ;
 }
 
 /************* CONSTRUCTOR METHOD *************/
@@ -105,9 +118,10 @@ MyCourseDialog::MyCourseDialog(QWidget *parent, QString xml_path) :
     // happening with CurrentRow return value
     ui->listWidget->setCurrentRow(0);
     ui->listWidget_2->setCurrentRow(0);
-    qDebug() << CourseList.size();
 
     dialog_ended = false ;
+
+    autopath = true ;
 }
 
 
@@ -123,6 +137,7 @@ MyCourseDialog::~MyCourseDialog()
 void MyCourseDialog::on_listWidget_itemSelectionChanged()
 {
     ui->listWidget_2->clear();
+
     CurrentClassList.clear();
 
     QDomElement teacher = root.firstChildElement() ;
@@ -151,22 +166,6 @@ void MyCourseDialog::on_listWidget_itemSelectionChanged()
        current_class.clear();
     }
     
-    date = QDate::currentDate() ;
-
-    if(date.month() <= 7) {
-        semester = QString::number(date.year()) + "_" + "1" ;
-    }
-    else {
-        semester = QString::number(date.year()) + "_" + "2" ;
-    }
-
-
-    // The new file will be named after the current date,
-    // e.g., 27_08_2016.mkv
-    filename = date.toString("dd_MM_yyyy") ;
-    // File extension
-    file_extension = ".mkv" ;
-
 
     // Adds the class code to the ListWidget
     for(uint8_t i = 0; i < CurrentClassList.size(); i++) {
@@ -176,6 +175,8 @@ void MyCourseDialog::on_listWidget_itemSelectionChanged()
     // Sets CurrentCourse code and CurrentClass to the currently
     // selected on both widgets
     CurrentCourse = CourseIDList.at(ui->listWidget->currentRow()) ;
+
+    ui->listWidget_2->setCurrentRow(0);
 }
 
 void MyCourseDialog::on_listWidget_2_itemSelectionChanged()
@@ -197,23 +198,27 @@ void MyCourseDialog::on_pushButton_2_clicked()
         dialog_ended = close() ;
     }
 
-    path = QStandardPaths::writableLocation(QStandardPaths::MoviesLocation) + QString("/") ;
+    if(autopath == true) {
+        dir_videos = QStandardPaths::writableLocation(QStandardPaths::MoviesLocation) + QString("/") ;
+        rec_dir = dir_videos ;
 
-    QDir dir(path) ;
+        QDir dir(rec_dir) ;
 
-    // Creates a new folder for the recordings
-    // This folder's name is the course code.
-    // It doesn't matter that it actually doesn't
-    // check whether the folder exists, for mkpath
-    // only creates a directory if it doesn't already
-    //exists
-    dir.mkpath(path + CurrentCourse) ;
-    path = path + CurrentCourse + "/" ;
-    dir.mkpath(path + CurrentClass) ;
-    path = path + CurrentClass + "/" ;
-    dir.mkpath(path + year+"_"+semester) ;
-    path = path + year+"_"+semester + "/" ;
-    
+        // Creates a new folder for the recordings
+        // This folder's name is the course code.
+        // It doesn't matter that it actually doesn't
+        // check whether the folder exists, for mkpath
+        // only creates a directory if it doesn't already
+        //exists
+        dir.mkpath(rec_dir + QString("LectureRecordings/")) ;
+        rec_dir = rec_dir + QString("LectureRecordings/") ;
+        dir.mkpath(rec_dir + CurrentCourse) ;
+        rec_dir = rec_dir + CurrentCourse + "/" ;
+        dir.mkpath(rec_dir + CurrentClass) ;
+        rec_dir = rec_dir + CurrentClass + "/" ;
+        dir.mkpath(rec_dir +  year + "_" +semester) ;
+        rec_dir = rec_dir + year+ "_" +semester + "/" ;
+    }
 }
 
 /************* PUSH_BUTTON *************/

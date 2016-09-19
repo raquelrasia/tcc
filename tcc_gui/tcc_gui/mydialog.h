@@ -22,9 +22,10 @@ public:
     explicit MyDialog(QWidget *parent = 0);
     ~MyDialog();
     bool get_dialog_ended() ;
-    QString get_path() ;
+    QString get_rec_dir() ;
     QString get_filename() ;
     QString get_file_extension() ;
+
 
 private slots:
     void on_pushButton_clicked();
@@ -37,7 +38,8 @@ private slots:
 private:
     Ui::MyDialog *ui;
 
-    QString path ;
+    QString rec_dir ;
+    QString dir_videos ;
     QString filename ;
     QString full_path ;
     QString file_extension ;

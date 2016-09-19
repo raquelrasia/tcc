@@ -8,21 +8,15 @@ bool MyDialog::get_dialog_ended() {
 }
 
 /************* AUX METHOD *************/
-// returns path
-QString MyDialog::get_path() {
-    return path ;
+// returns
+QString MyDialog::get_rec_dir() {
+    return rec_dir ;
 }
 
 /************* AUX METHOD *************/
 // returns the file name
 QString MyDialog::get_filename() {
     return filename ;
-}
-
-/************* AUX METHOD *************/
-// returns the file extension
-QString MyDialog::get_file_extension() {
-    return file_extension ;
 }
 
 
@@ -37,8 +31,9 @@ MyDialog::MyDialog(QWidget *parent) :
     this->setWindowTitle("Choose Lecture Directory");
 
     // Set path to standard location (e.g., Videos, Documents, etc)
-    path = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + QString("/") ;
-    ui->lineEdit->setText(path);
+    dir_videos = QStandardPaths::writableLocation(QStandardPaths::MoviesLocation) + QString("/") ;
+    rec_dir = dir_videos ;
+    ui->lineEdit->setText(dir_videos);
 
     // Gets current date
     date = QDate::currentDate().toString("dd_MM_yyyy");
@@ -49,7 +44,7 @@ MyDialog::MyDialog(QWidget *parent) :
 
     // File extension
     file_extension = ".mkv" ;
-    full_path = path + filename + file_extension ;
+    full_path = rec_dir + filename + file_extension ;
 
     // If there's not a file with the same name on the chosen folder,
     // then change button to "clickable", i.e., not grayed out
@@ -82,16 +77,16 @@ MyDialog::~MyDialog()
 void MyDialog::on_pushButton_clicked()
 {
     // Get directory from browsing dialog
-    QString dir_name = QFileDialog::getExistingDirectory(this, tr("Open Directory"), path,
+    QString dir_name = QFileDialog::getExistingDirectory(this, tr("Open Directory"), rec_dir,
                                                          QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks) ;
     // Checks whether dir_name is not empty
     if (dir_name != "") {
         ui->lineEdit->setText(dir_name) ;
-        path = dir_name + QString("/");
+        rec_dir = dir_name + QString("/");
     }
 
     // Concatenates full_path
-    full_path = path + filename + file_extension ;
+    full_path = rec_dir + filename + file_extension ;
 
     // If there's not a file with the same name on the chosen folder,
     // then change button to "clickable", i.e., not grayed out
@@ -115,12 +110,12 @@ void MyDialog::on_pushButton_clicked()
 // Defines behaviour of the "NEXT" push button
 void MyDialog::on_pushButton_2_clicked()
 {
-    QDir dir(path) ;
+    QDir dir(rec_dir) ;
 
     // Creates a new folder for the recordings
     // This folder's name is the current date
-    if (dir.mkpath(path + date)) {
-        path = path + date + "/" ;
+    if (dir.mkpath(rec_dir + date)) {
+        rec_dir = rec_dir + date + "/" ;
     }
 
     // Updates dialog_ended status flag

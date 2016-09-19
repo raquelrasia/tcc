@@ -12,6 +12,9 @@
 #include <QFileInfo>
 #include <QDate>
 #include <QMessageBox>
+#include <QNetworkInterface>
+#include <QMutex>
+#include <QCloseEvent>
 
 namespace Ui {
 class MainDialog;
@@ -26,26 +29,40 @@ public:
     ~MainDialog();
     bool fileExists(QString path) ;
     void set_xml_path( QString path);
+    void closeEvent(QCloseEvent *event);
 
 private slots:
     void on_pushButton_clicked();
     void on_pushButton_2_clicked();
     void on_pushButton_3_clicked();
     void on_pushButton_4_clicked();
+    void on_pushButton_5_clicked();
+    void on_pushButton_6_clicked();
 
 private:
     Ui::MainDialog *ui;
     QProcess * ffmpeg_process ;
-    QProcess * ffmpeg_cat ;
+    //QProcess * ffmpeg_cat ;
+    //QProcess * netcat_mplayer_client ;
+    //QProcess * rpi_cam ;
+    //QProcess * transfer ;
 
-    QString path ;
-    QString filename ;
-    QString video_file_extension ;
+    // Recording directory
+    QString rec_dir ;
+
+    // Full path for video recording including audio and video extensions,
+    // e.g., C:/User/someone/Videos/IF66D/s11/2016_2/14_09_16.mkv
     QString full_path ;
+    QString dir_videos ;
+    QString filename ;
+    QString audio_file_extension ;
+    QString video_file_extension ;
     QString course_code ;
     QString class_code ;
+    QString semester ;
     QString fps ; // Frames per second
     QString xml_path;
+    QString program_dir ;
 
     uint8_t number_of_recordings ;
 

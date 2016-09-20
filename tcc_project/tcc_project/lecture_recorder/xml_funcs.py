@@ -6,7 +6,7 @@ import datetime
 from xml.dom import minidom
 
 
-def create_xml_video_file(self,course, my_class): 
+def create_xml_video_file(course, my_class): 
         path = MEDIA_ROOT +'videos/'+ get_course_class_path(course, my_class)
 
         names_split = path.split('/')
@@ -63,7 +63,7 @@ def add_video(video, fname):
 def create_xml_teacher_file(user): 
         f_name = MEDIA_ROOT +'teachers/'+ user.username
         fname =  f_name + '.xml'
-        if os.path.exists(fname) and os.path.size(fname) != 0:
+        if os.path.exists(fname) and os.path.getsize(fname) != 0:
             return fname
         else:
             if not os.path.exists(os.path.dirname(fname)):

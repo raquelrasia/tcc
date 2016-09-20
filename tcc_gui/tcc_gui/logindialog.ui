@@ -85,7 +85,7 @@
    <widget class="QPushButton" name="ContinueSession">
     <property name="geometry">
      <rect>
-      <x>370</x>
+      <x>400</x>
       <y>230</y>
       <width>111</width>
       <height>41</height>
@@ -98,7 +98,7 @@
    <widget class="QLabel" name="expire_label">
     <property name="geometry">
      <rect>
-      <x>270</x>
+      <x>140</x>
       <y>180</y>
       <width>341</width>
       <height>44</height>

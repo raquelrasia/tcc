@@ -1,9 +1,13 @@
 {%if videos%}
 <ul class = "videos">
 	{%for video in videos%}
+	 	Aula de {{ video.date }}
  		<li>
-			<a href="/files/{{ video.file.url|escape}}" class="title">
-			{{ video.name|escape }}</a>
+			<a href="/video_view/{{ video.file.url|escape}}" class="title">
+			video </a>
+
+			<a href="/audio_view/{{ video.audio_file.url|escape}}" class="title">
+			audio </a>	
 		<br />
 		{%if show_tags%}
 		Tags:
@@ -12,7 +16,7 @@
 					{%for tag in bookmark.tag_set.all%}
 						<li> 
 							<a href="/tag/{{ tag.name|urlencode }}"> {{ tag.name|escape }} </a>
-							</li>
+						</li>
 					{%endfor%}
 				</ul> 
 			{% else %}

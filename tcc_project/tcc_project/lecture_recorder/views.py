@@ -56,7 +56,17 @@ def register_page(request):
                 username = form.cleaned_data["username"],
                 password = form.cleaned_data["password1"],
                 email = form.cleaned_data["email"],
+                first_name = form.cleaned_data["first_name"],
+                last_name = form.cleaned_data["last_name"],
             )
+            if form.cleaned_data["email"].find('@alunos'):
+                is_teacher =  False
+            else:
+                is_teacher =  True
+
+            profile = Profile(user = user,
+                              is_teacher = is_teacher)
+            print("sour profe?",  user.profile.is_teacher)
             return HttpResponseRedirect('/register/success')
     else:
         form = RegistrationForm()
@@ -225,20 +235,19 @@ def course_save_page(request):
     else:
         return render_to_response('course_save.html', variables)
 
-def video_upload_page(request, course_code, class_name):
+def video_upload_page(request, course_code, class_name, class_year, class_semester):
     if request.method == 'POST':
         form = VideoUploadForm(request.POST, request.FILES)
         if form.is_valid():
             file = request.FILES['file']
-            video = Video(file = file)
+            audio_file =  request.FILES['audio_file']
+            video = Video(file = file, audio_file = audio_file)
             video.date =  form.cleaned_data['date'] 
             try:
                 course = Course.objects.get(code = course_code)
-                classes = course.class_set.all() 
-                for c in classes:
-                    if c.name  == class_name:
-                        my_class = c
-                        break;
+                my_class = course.class_set.get(name = class_name,
+                                               year = class_year,
+                                               semester = class_semester); 
             except:
                 return HttpResponseRedirect('/')
             tag_names = form.cleaned_data['tags'].split()
@@ -271,15 +280,10 @@ def video_upload_page(request, course_code, class_name):
 def course_page(request, course_code):
     show_button = False
     try:
-        show_button = True
-        course = request.user.course_set.get(code = course_code)
-    except:
-        try:
-            show_button = True
-            course = Course.objects.get(code = course_code)
-        except:    
-            raise Http404('Disciplina nao encontrada.')
-    
+        course = Course.objects.get(code = course_code)
+    except:    
+        raise Http404('Disciplina nao encontrada.')
+    print(request.user.profile.is_teacher)
     classes = course.class_set.all()
     #videos = course.video_set.all()
     variables = RequestContext (request, {
@@ -338,7 +342,6 @@ def _course_save(request, form):
     return course
 
 def class_save_page(request, course_code):
-    #course = request.user.course_set.get(code = course_code)
     course =  Course.objects.get(code = course_code)
     if course:
         if request.method == 'POST':
@@ -390,10 +393,15 @@ def class_page(request, course_code, class_code, class_year, class_semester):
         raise Http404('Turma nao encontrada.')
 
     videos = my_class.video_set.all()
+    class_teacher = False
+    if my_class in request.user.class_set():
+        class_teacher = True
+
     variables = RequestContext (request, {
         'course': course,
         'class': my_class,
         'videos' : videos,
+        'is_class_teacher' : class_teacher,
     })      
     return render_to_response('class_page.html', variables)
 
@@ -432,6 +440,22 @@ def index(request):
 
     # Return response back to the user, updating any cookies that need changed.
     return response
+
+
+def video_view_page(request, path):
+    video_url= path
+    variables = RequestContext (request, {
+        'video_url': video_url,
+    })      
+    return render_to_response('video_view.html', variables)
+
+def audio_view_page(request, path):
+    audio_url= path
+    variables = RequestContext (request, {
+        'audio_url': audio_url,
+    })      
+    return render_to_response('audio_view.html', variables)
+
 
 """
 ################################################################################################

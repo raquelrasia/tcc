@@ -1,3 +1,5 @@
+# coding: utf-8
+
 from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
@@ -5,8 +7,13 @@ import re
 import datetime
 from django.forms import extras
 
+accepted_video_formats = ['mp4', 'mkv', 'ogv']
+accepted_audio_formats = ['mp3']
+
 class RegistrationForm(forms.Form):
 	username = forms.CharField(label = 'Nome de usuario', max_length = 30)
+	first_name = forms.CharField(label = 'Nome', max_length = 30)
+	last_name = forms.CharField(label = 'Sobrenome', max_length = 30)
 	email = forms.EmailField(label = 'Email')
 	password1 = forms.CharField(
 		label = 'Senha',
@@ -69,7 +76,10 @@ class CourseSaveForm(forms.Form):
 
 class VideoUploadForm(forms.Form):
 	file = forms.FileField(
-		label  = 'Escolha um arquivo',
+		label  = 'Escolha um arquivo de vídeo',
+	)
+	audio_file = forms.FileField(
+		label  = 'Escolha um arquivo de áudio',
 	)
 	tags = forms.CharField(
 		label = 'Tags',
@@ -78,7 +88,37 @@ class VideoUploadForm(forms.Form):
 	)
 	date = forms.DateTimeField(
 		widget = extras.SelectDateWidget(),
+		initial= datetime.datetime.now(),
 	)
+
+	def clean_file(self):
+		if 'file' in self.cleaned_data:
+			file = self.cleaned_data['file']
+	        if file:
+	            filename = file.name
+	            extension = filename.split('.')[-1].lower()
+	            print filename
+	            if extension in accepted_video_formats:
+	                print 'File is ok'
+	                return file
+	            else:
+	                print 'File is NOT accepted'
+	                raise forms.ValidationError("Arquivo de vídeo inválido")
+
+	def clean_audio_file(self):
+		if 'file' in self.cleaned_data:
+			file = self.cleaned_data['audio_file']
+	        if file:
+	            filename = file.name
+	            extension = filename.split('.')[-1].lower()
+	            print filename
+	            if extension in accepted_audio_formats:
+	                print 'File is ok'
+	                return file
+	            else:
+	                print 'File is NOT accepted'
+	                raise forms.ValidationError("Arquivo de áudio inválido")
+
 
 class VideoUploadForm_API(forms.Form):
 	file = forms.FileField()

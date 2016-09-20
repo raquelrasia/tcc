@@ -6,7 +6,7 @@ import os.path
 
 
 site_media = os.path.join(os.path.dirname(__file__), 'site_media')
-videos = os.path.join(os.path.dirname(__file__), 'videos')
+videos = os.path.join(os.path.dirname(__file__), 'files/videos')
 
 
 urlpatterns = patterns('',
@@ -33,7 +33,7 @@ urlpatterns = patterns('',
     url(r'^class/$', course_list_page),
     url(r'^class/(\w+)/$', course_page),
     url(r'^course_save/$', course_save_page),
-    url(r'^class/(\w+)/(\w+)/video_upload/$', video_upload_page),
+    url(r'^class/(\w+)/(\w+)/(\w+)/(\w+)/video_upload/$', video_upload_page),
     url(r'^api/video_upload/$', api_video_upload),
     url(r'^api/teacher_xml_download/$', api_return_teacher_info),
     url(r'^api/video_xml_download/$', api_return_videos_file), 
@@ -41,4 +41,6 @@ urlpatterns = patterns('',
     url(r'^class/(\w+)/(\w+)/(\w+)/(\w+)/$', class_page),   
     url(r'^index/$', index),
     url(r'^api/login/$', api_login),
+    url(r'^video_view/(?P<path>.*)$', video_view_page),
+    url(r'^audio_view/(?P<path>.*)$', audio_view_page),
 )

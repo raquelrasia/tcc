@@ -4,7 +4,12 @@ from django.contrib.auth.signals import user_logged_in
 import os
 from tcc_project.settings import MEDIA_ROOT
 from aux_funcs import get_course_class_path
-#from aux_funcs import get_upload_file
+
+class Profile(models.Model):  
+    user = models.OneToOneField(User, on_delete=models.CASCADE)  
+    #other fields here
+    is_teacher=models.BooleanField(default = False)
+
 
 # Create your models here.
 class Link(models.Model):
@@ -21,7 +26,6 @@ class Bookmark(models.Model):
     
     def __str__(self):
         return ("{}, {}".format(self.user.username, self.link.url))
-
 
 
 class Course(models.Model):
@@ -44,16 +48,25 @@ class Class(models.Model):
         return ("{}, {}, {}".format(self.name, self.year, self.semester))
 
 class Video(models.Model):
-    def get_upload_file_path(self, filename):
+    def get_video_upload_file_path(self, filename):
         classes = self.my_class
         course = self.my_class.course
         path = 'videos/' + get_course_class_path(course, self.my_class) + filename  
         self.name = filename     
         return path
+    
+    def get_audio_upload_file_path(self, filename):
+        classes = self.my_class
+        course = self.my_class.course
+        path = 'videos/' + get_course_class_path(course, self.my_class) + filename  
+        self.audio_name = filename     
+        return path
 
-    file = models.FileField(upload_to = get_upload_file_path) #upload_to = get_upload_file_path))
+    file = models.FileField(upload_to = get_video_upload_file_path)
+    audio_file = models.FileField(upload_to = get_audio_upload_file_path)
     date = models.DateField()
     name = models.CharField(max_length = 100)
+    audio_name = models.CharField(max_length = 100)
     my_class = models.ForeignKey(Class)
 
     def __str__(self):

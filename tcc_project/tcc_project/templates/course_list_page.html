@@ -6,7 +6,9 @@
 {%block head%} Lista de todas as disciplinas cadastradas: {%endblock%}
 {%block content%}
 {%include 'course_list.html' %}
-{% if user.is_authenticated %}
+{%if user.is_authenticated%}
+{%if user.profile.is_teacher%}
 <a href= "/course_save"> Cadastrar Disciplina </a>
-{% endif %}
+{%endif%}
+{%endif%}
 {%endblock%}

@@ -59,14 +59,16 @@ def register_page(request):
                 first_name = form.cleaned_data["first_name"],
                 last_name = form.cleaned_data["last_name"],
             )
-            if form.cleaned_data["email"].find('@alunos'):
-                is_teacher =  False
-            else:
+
+            if not '@alunos' in form.cleaned_data["email"] and 'utfpr' in form.cleaned_data["email"]:
                 is_teacher =  True
+            else:
+                is_teacher =  False
 
             profile = Profile(user = user,
                               is_teacher = is_teacher)
-            print("sour profe?",  user.profile.is_teacher)
+            profile.save()
+            user.save()
             return HttpResponseRedirect('/register/success')
     else:
         form = RegistrationForm()
@@ -281,9 +283,9 @@ def course_page(request, course_code):
     show_button = False
     try:
         course = Course.objects.get(code = course_code)
+        show_button = request.user.profile.is_teacher;
     except:    
         raise Http404('Disciplina nao encontrada.')
-    print(request.user.profile.is_teacher)
     classes = course.class_set.all()
     #videos = course.video_set.all()
     variables = RequestContext (request, {
@@ -394,7 +396,8 @@ def class_page(request, course_code, class_code, class_year, class_semester):
 
     videos = my_class.video_set.all()
     class_teacher = False
-    if my_class in request.user.class_set():
+
+    if my_class in request.user.class_set.all():
         class_teacher = True
 
     variables = RequestContext (request, {

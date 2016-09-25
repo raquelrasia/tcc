@@ -108,6 +108,7 @@ bool LoginDialog::read_auth_xml(QString * username, int * days_expire)
     bool has_teacher = false;
     bool has_auth = false;
     bool has_date = false;
+    bool continue_reading = true;
     QDate current_date = QDate::currentDate();
 
     QFile file(auth_file_path);
@@ -129,10 +130,17 @@ bool LoginDialog::read_auth_xml(QString * username, int * days_expire)
                 attributes = xml.attributes();
                 if (attributes.hasAttribute("username"))
                 {
-                    foreach(const QXmlStreamAttribute &attr, attributes) {
-                        if (attr.name().toString() == "username") {
-                            *username = attr.value().toString();
+                    foreach(const QXmlStreamAttribute &attr, attributes)
+                    {
+                        if (attr.name().toString() == "username")
+                        {
                             has_teacher = true;
+                            *username = attr.value().toString();
+                            if (*username == "")
+                            {
+                               has_teacher = false; 
+                               continue_reading = false;
+                            }
                         }
                     }
                 }
@@ -141,14 +149,14 @@ bool LoginDialog::read_auth_xml(QString * username, int * days_expire)
                     has_teacher = false;
                 }
             }
-            else if (xml.name() == "auth_state")
+            else if (xml.name() == "auth_state" && continue_reading)
             {
                 if(xml.readElementText() == "true")
                 {
                     has_auth = true;
                 }
             }
-            else if (xml.name() == "date")
+            else if (xml.name() == "date" && continue_reading)
             {
                 QDate last_date = QDate::fromString(xml.readElementText(), "dd_MM_yyyy") ;
                 int days_count = current_date.daysTo(last_date);

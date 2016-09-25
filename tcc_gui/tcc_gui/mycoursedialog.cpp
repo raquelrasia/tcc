@@ -42,6 +42,12 @@ QString MyCourseDialog::get_current_semester(){
 }
 
 /************* AUX METHOD *************/
+// returns current year
+QString MyCourseDialog::get_current_year(){
+    return year ;
+}
+
+/************* AUX METHOD *************/
 // returns state for current dialog.
 bool MyCourseDialog::get_dialog_ended() {
     return dialog_ended ;
@@ -122,6 +128,9 @@ MyCourseDialog::MyCourseDialog(QWidget *parent, QString xml_path) :
     dialog_ended = false ;
 
     autopath = true ;
+
+    QDateTime current_date = QDateTime::currentDateTime();
+    filename = current_date.date().toString("dd_MM_yyyy");
 }
 
 

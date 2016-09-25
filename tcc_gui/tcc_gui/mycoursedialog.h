@@ -20,6 +20,7 @@ public:
     QString get_current_course() ;
     QString get_current_class() ;
     QString get_current_semester() ;
+    QString get_current_year();
     QString get_rec_dir() ;
     QString get_dir_videos() ;
     QString get_filename() ;

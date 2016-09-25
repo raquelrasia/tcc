@@ -52,15 +52,22 @@ void LoginDialog::on_pushButton_clicked()
     QString xml_path = make_xml_path() + username + ".xml";
     errorCode = connection.loginRequest(username, password);
     if(errorCode == NO_ERROR_CODE) {
-        close() ;
-        connection.downloadXmlTeacherFile(username, xml_path);
-        //--- save file with authenticated status ---//
-        write_auth_xml();
+        QString error = connection.downloadXmlTeacherFile(username, xml_path);
+        if (error == "-1")
+        {
+            QMessageBox::warning(this, "Courses/Classes File", "No Course/Class registered. You need to register them online before using the application") ;
+        }
+        else
+        {
+            close() ;
+            //--- save file with authenticated status ---//
+            write_auth_xml();
+            MainDialog mdialog ;
+            mdialog.set_xml_path(xml_path);
+            mdialog.setModal(true);
+            mdialog.exec() ;
 
-        MainDialog mdialog ;
-        mdialog.set_xml_path(xml_path);
-        mdialog.setModal(true);
-        mdialog.exec() ;
+        }
 
     }
     else {
@@ -200,4 +207,3 @@ void LoginDialog::on_ContinueSession_clicked()
         mdialog.setModal(true);
         mdialog.exec() ;
 }
-

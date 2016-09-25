@@ -77,11 +77,19 @@ QString NetworkConnection::downloadXmlTeacherFile(QString username, QString xml_
     QNetworkReply * reply = mgr->get(req);
 
     eventLoop.exec(); // blocks stack until "finished()" has been called
-
-    QFile file(xml_path);
-    if (file.open(QIODevice::ReadWrite)) {
-        QTextStream stream(&file);
-        stream << reply->readAll() << endl;
+    QString response = reply->readAll();
+    //if file doesn't exist
+    if (response == "-1")
+    {
+        return "-1";
+    }
+    else
+    {
+        QFile file(xml_path);
+        if (file.open(QIODevice::ReadWrite)) {
+            QTextStream stream(&file);
+            stream << response << endl;
+        }
     }
 
     return xml_path;

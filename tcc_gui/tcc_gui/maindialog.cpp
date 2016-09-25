@@ -645,7 +645,7 @@ void MainDialog::on_pushButton_6_clicked() {
          if (!bat_file.open(QIODevice::WriteOnly | QIODevice::Text))
              return false;
      QTextStream outcmds(&bat_file);
-     outcmds << "plink -ssh pi@169.254.96.87 -pw raspberry \"python /home/pi/video_xml_manager.py "
+     outcmds << "plink -ssh pi@169.254.96.87 -pw raspberry \"python /home/pi/client/video_xml_manager.py "
              << course_code + QString(" ") + class_code + QString(" ")+ year + QString(" ") +
                 semester +QString(" ") +lecture_date +QString(" ") + video_name + QString(" ") +
                 audio_name  << "\n" ;
@@ -658,8 +658,6 @@ void MainDialog::on_pushButton_6_clicked() {
     qDebug() << "Trasnfer Finished";
     QProcess * transfer = new QProcess(this) ;
     //QObject::connect(transfer, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(on_finishedTransfer(int , QProcess::ExitStatus ))) ;
-    transfer->start(program_dir + QString("config/") + QString("xml_sync.bat")) ;
-    transfer->waitForFinished();
-    transfer->close();
+    transfer->startDetached(program_dir + QString("config/") + QString("xml_sync.bat")) ;
  }
 

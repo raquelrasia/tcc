@@ -1,14 +1,10 @@
-{%if videos%}
+{%if lectures %}
 <ul class = "videos">
-	{%for video in videos%}
-	 	Aula de {{ video.date }}
+	{%for lecture in lectures %}
  		<li>
-			<a href="/video_view/{{ video.file.url|escape}}" class="title">
-			video </a>
-
-			<a href="/audio_view/{{ video.audio_file.url|escape}}" class="title">
-			audio </a>	
+ 		Aula de  <a href="{{ lecture.date_name }}"> {{ lecture.date_name }} </a>
 		<br />
+		{% include 'lecture_page.html' %}
 		{%if show_tags%}
 		Tags:
 			{%if bookmark.tag_set.all%}

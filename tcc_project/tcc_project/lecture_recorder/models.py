@@ -47,36 +47,45 @@ class Class(models.Model):
     def __str__(self):
         return ("{}, {}, {}".format(self.name, self.year, self.semester))
 
-class Video(models.Model):
-    def get_video_upload_file_path(self, filename):
-        classes = self.my_class
-        course = self.my_class.course
-        path = 'videos/' + get_course_class_path(course, self.my_class) + filename  
-        self.name = filename     
-        return path
-    
-    def get_audio_upload_file_path(self, filename):
-        classes = self.my_class
-        course = self.my_class.course
-        path = 'videos/' + get_course_class_path(course, self.my_class) + filename  
-        self.audio_name = filename     
-        return path
-
-    file = models.FileField(upload_to = get_video_upload_file_path)
-    audio_file = models.FileField(upload_to = get_audio_upload_file_path)
+class Lecture(models.Model):
     date = models.DateField()
-    name = models.CharField(max_length = 100)
-    audio_name = models.CharField(max_length = 100)
+    date_name = models.CharField(max_length = 20)
     my_class = models.ForeignKey(Class)
 
     def __str__(self):
-        return ("{}, {}".format(self.file.url, self.date))
+        return ("{}, {}".format(self.date, self.my_class.name))
 
+class Video(models.Model):
+    def get_video_upload_file_path(self, filename):
+        classes = self.lecture.my_class
+        course = self.lecture.my_class.course
+        path = 'videos/' + get_course_class_path(course, self.lecture.my_class) + filename  
+        self.name = filename
+        self.path = path
+        return path
 
+    lecture = models.OneToOneField(Lecture, on_delete=models.CASCADE)
+    file = models.FileField(upload_to = get_video_upload_file_path)
+    name = models.CharField(max_length = 100)
+    
+    def __str__(self):
+        return ("{}, {}".format(self.file.url, self.lecture))
+
+class Audio(models.Model):
+    def get_audio_upload_file_path(self, filename):
+        classes = self.lecture.my_class
+        course = self.lecture.my_class.course
+        path = 'videos/' + get_course_class_path(course, self.lecture.my_class) + filename  
+        self.audio_name = filename     
+        return path
+    
+    lecture = models.OneToOneField(Lecture, on_delete=models.CASCADE)
+    audio_file = models.FileField(upload_to = get_audio_upload_file_path)
+    audio_name = models.CharField(max_length = 100)
 
 class Tag(models.Model):
     name = models.CharField(max_length = 64, unique = True)
-    videos = models.ManyToManyField(Video)
+    lecture = models.ManyToManyField(Lecture)
 
     def __str__(self):
         return self.name

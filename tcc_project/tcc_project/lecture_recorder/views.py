@@ -1,3 +1,4 @@
+#coding: utf-8
 from django.shortcuts import render
 from django.http import HttpResponse, Http404, HttpResponseRedirect 
 from django.template import RequestContext
@@ -17,7 +18,6 @@ from xml_funcs import *
 import os
 from tcc_project.settings import MEDIA_ROOT
 from django.utils.encoding import smart_str
-
 
 # Create your views here.
 def main_page(request):
@@ -237,34 +237,95 @@ def course_save_page(request):
     else:
         return render_to_response('course_save.html', variables)
 
-def video_upload_page(request, course_code, class_name, class_year, class_semester):
+
+def handle_uploaded_file(f, dest_name):
+    vector = [1, 2, 3, 4]
+    chunk_size = 64*1024
+    chunk_idx = 0
+    total_chunks = f.size/chunk_size
+
+    if not os.path.exists(os.path.dirname(dest_name)):
+            os.makedirs(os.path.dirname(dest_name))
+
+    with open(MEDIA_ROOT + dest_name, 'wb+') as destination:
+        for chunk in f.chunks():
+            destination.write(chunk)
+            percent = (chunk_idx*100/total_chunks)
+            print("uploading", str(percent) + "%")
+            chunk_idx = chunk_idx + 1
+
+def video_audio_upload_page(request, course_code, class_name, class_year, class_semester):
+    has_video = False
+    has_audio = False
     if request.method == 'POST':
         form = VideoUploadForm(request.POST, request.FILES)
         if form.is_valid():
-            file = request.FILES['file']
-            audio_file =  request.FILES['audio_file']
-            video = Video(file = file, audio_file = audio_file)
-            video.date =  form.cleaned_data['date'] 
             try:
                 course = Course.objects.get(code = course_code)
                 my_class = course.class_set.get(name = class_name,
                                                year = class_year,
                                                semester = class_semester); 
+                
             except:
-                return HttpResponseRedirect('/')
+                raise Http404('Turma não encontrada')
+            #try:
+            if(True):
+                lecture, lecture_created = Lecture.objects.get_or_create(date = form.cleaned_data['date'],
+                                            date_name= str(form.cleaned_data['date'].strftime('%d-%m-%Y')),
+                                            my_class = my_class) 
+                lecture.my_class = my_class
+                my_class.save()
+
+                #Video File 
+                if request.FILES.has_key('file'):
+                    has_video = True
+                    file = request.FILES['file']
+                    if not lecture_created and hasattr(lecture, 'video'):
+                        video = lecture.video
+                        if os.path.exists(lecture.video.file.path):
+                            os.remove(lecture.video.file.path)
+                            _remove_video_from_xml(course, my_class, video)
+                        video.file = file
+                    else:
+                        video = Video(file = file, lecture = lecture)
+                
+                    #dest_path = video.get_video_upload_file_path(video.file.name)
+                    #handle_uploaded_file(video.file, dest_path)
+                    video.save()
+
+                #Audio File
+                if request.FILES.has_key('audio_file'): 
+                    has_audio = True
+                    audio_file =  request.FILES['audio_file']
+                    if not lecture_created and hasattr(lecture, 'audio'):
+                        audio = lecture.audio
+                        if os.path.exists(lecture.audio.audio_file.path):
+                            os.remove(lecture.audio.audio_file.path)
+                            _remove_audio_from_xml(course, my_class, audio)
+                        audio.audio_file = audio_file
+                    else:
+                        audio = Audio(audio_file = audio_file, lecture = lecture)
+                    audio.save()  
+                lecture.save()
+            #except:
+            #   raise Http404('Erro ao criar Aula')
+
             tag_names = form.cleaned_data['tags'].split()
             for tag_name in tag_names:
-                tag, dummy = Tag.objects.get_or_create(
+                tag = Tag.objects.get_or_create(
                     name = tag_name
                 )
-            
-            #video.tag_set.add(tag)   
-            my_class.video_set.add(video)
-            video.save()
-            #adiciona video ao arquivo xml da class
-            _add_video_to_xml(course, my_class, video)
+                #lecture.tag_set.add(tag)
 
-            course.save()
+            #adiciona video ao arquivo xml da class
+            if has_video:
+                _add_video_to_xml(course, my_class, lecture, video)
+            if has_audio:
+                #dest_path = audio.get_audio_upload_file_path(audio.audio_file.name)
+                #handle_uploaded_file(audio.audio_file, dest_path)
+                _add_audio_to_xml(course, my_class, lecture, audio)
+
+
             return HttpResponseRedirect(
                 '/class/%s' % course.code
             )
@@ -276,7 +337,7 @@ def video_upload_page(request, course_code, class_name, class_year, class_semest
             'form' : form,
         }
     )
-    return render_to_response('video_upload.html', variables)
+    return render_to_response('video_audio_upload.html', variables)
 
 
 def course_page(request, course_code):
@@ -295,6 +356,7 @@ def course_page(request, course_code):
         'show_button' : show_button
     })      
     return render_to_response('course_page.html', variables)
+
 
 def course_list_page(request):
     course = Course.objects.all() 
@@ -330,17 +392,12 @@ def course_list_page(request):
 
 
 def _course_save(request, form):
-    
-    print(form.cleaned_data['code'])
     course, created = Course.objects.get_or_create(
         code = form.cleaned_data['code'],
         #user_creator = request.user,
     )
-
-    #print(course)
     course.name = form.cleaned_data['name']
     course.save()
-    #print(course.name)
     return course
 
 def class_save_page(request, course_code):
@@ -394,7 +451,7 @@ def class_page(request, course_code, class_code, class_year, class_semester):
     except:
         raise Http404('Turma nao encontrada.')
 
-    videos = my_class.video_set.all()
+    lectures = my_class.lecture_set.all()
     class_teacher = False
 
     if my_class in request.user.class_set.all():
@@ -403,10 +460,35 @@ def class_page(request, course_code, class_code, class_year, class_semester):
     variables = RequestContext (request, {
         'course': course,
         'class': my_class,
-        'videos' : videos,
+        'lectures' : lectures,
         'is_class_teacher' : class_teacher,
     })      
     return render_to_response('class_page.html', variables)
+
+
+def lecture_page(request, course_code, class_code, class_year, class_semester, lecture_date):
+    try:
+        course = Course.objects.get(code = course_code)
+    except:
+        raise Http404('Disciplina nao encontrada.')
+
+    try:
+        my_class = course.class_set.get(name = class_code, 
+                                        year = class_year,
+                                        semester = class_semester)
+    except:
+        raise Http404('Turma nao encontrada.')
+
+
+    try:
+        lecture = my_class.lecture_set.get(date_name = lecture_date)
+    except:
+        raise Http404('Aula nao encontrada.')
+
+    variables = RequestContext (request, {
+        'lecture' : lecture,
+    })      
+    return render_to_response('lecture_page.html', variables)
 
 
 
@@ -471,8 +553,65 @@ def api_video_upload(request):
     if request.method == 'POST':
         form = VideoUploadForm_API(request.POST, request.FILES)
         if form.is_valid():
-            video = Video(file = request.FILES['file'])
-            video.date = form.cleaned_data['date']
+            try:
+                course = Course.objects.get(
+                        code = form.cleaned_data['course_code']
+                    )
+            except:             
+                response = JsonResponse({'state': 'class does not exist'})
+                return response
+
+            try:
+                my_class = course.class_set.get(
+                        name = form.cleaned_data['class_name'],
+                        semester = form.cleaned_data['class_semester'],
+                        year = form.cleaned_data['class_year'],
+                    )
+                lecture, lecture_created = Lecture.objects.get_or_create(date = form.cleaned_data['date'],
+                                                                date_name= str(form.cleaned_data['date'].strftime('%d-%m-%Y')), 
+                                                                my_class = my_class)
+            except:
+                response = JsonResponse({'state': 'class does not exist'})
+                return response
+
+            if form.cleaned_data.has_key('tags'):
+                tag_names = form.cleaned_data['tags'].split()
+                for tag_name in tag_names:
+                    tag, dummy = Tag.objects.get_or_create(
+                        name = tag_name
+                    )
+
+            #Video File 
+            if request.FILES.has_key('file'):
+                has_video = True
+                file = request.FILES['file']
+                if not lecture_created and hasattr(lecture, 'video'):
+                    video = lecture.video
+                    if os.path.exists(lecture.video.file.path):
+                        os.remove(lecture.video.file.path)
+                        _remove_video_from_xml(course, my_class, video)
+                    video.file = file
+                else:
+                    video = Video(file = file, lecture = lecture)
+
+                video.save()
+                _add_video_to_xml(course, my_class, lecture, video)
+                lecture.save()
+                response = JsonResponse({'state': 'video uploaded'})
+        else:
+            response = JsonResponse({'state': 'invalid form'})
+        return response
+    else:
+        response = JsonResponse({'state': 'no gets allowed'})
+        return HttpResponseRedirect('/')
+
+@csrf_exempt
+def api_audio_upload(request):
+    if request.method == 'POST':
+        print('oi')
+        form = AudioUploadForm_API(request.POST, request.FILES)
+        if form.is_valid():
+            print('eh valido')
             try:
                 course = Course.objects.get(
                         code = form.cleaned_data['course_code']
@@ -490,6 +629,13 @@ def api_video_upload(request):
             except:
                 response = JsonResponse({'state': 'class does not exist'})
                 return response
+            try:
+                lecture = Lecture.objects.get_or_create(date = form.cleaned_data['date'],
+                                        date_name= str(form.cleaned_data['date'].strftime('%d-%m-%Y')), 
+                                        my_class = my_class)
+            except: 
+                response = JsonResponse({'state': 'error in creating class'})
+                return response
 
             if form.cleaned_data.has_key('tags'):
                 tag_names = form.cleaned_data['tags'].split()
@@ -497,10 +643,26 @@ def api_video_upload(request):
                     tag, dummy = Tag.objects.get_or_create(
                         name = tag_name
                     )
-            my_class.video_set.add(video)
-            video.save()
-            _add_video_to_xml(course, my_class, video)
-            response = JsonResponse({'state': 'video uploaded'})
+
+            lecture.my_class = my_class
+            my_class.save()
+
+            #Audio File 
+            if request.FILES.has_key('file'):
+                has_video = True
+                file = request.FILES['file']
+                if not lecture_created and hasattr(lecture, 'audio'):
+                    audio = lecture.audio
+                    if os.path.exists(lecture.audio.audio_file.path):
+                        os.remove(lecture.audio.audio_file.path)
+                        _remove_audio_from_xml(course, my_class, audio)
+                    audio.audio_file = file
+                else:
+                    audio = Audio(file = file, lecture = lecture)
+                audio.save()
+                _add_audio_to_xml(course, my_class, lecture, audio)
+                lecture.save()
+                response = JsonResponse({'state': 'audio uploaded'})
         else:
             response = JsonResponse({'state': 'invalid form'})
         return response
@@ -575,13 +737,27 @@ def api_return_videos_file(request):
     name = names_split[-2] + names_split[-1]
     file_name =  file_name + name + '.xml' 
     xml_file = open(file_name, 'r')
-    path_to_file = os.path.dirname(file_name)
     response = HttpResponse(xml_file.read() , content_type='application/xml') # mimetype is replaced by content_type for django 1.7
     response['Content-Disposition'] = 'attachment; filename=%s' % file_name
     response['Content-Length'] = os.path.getsize(file_name)
     xml_file.close()
     return response
     
-def _add_video_to_xml(course, my_class, video):
+def _add_video_to_xml(course, my_class, lecture, video):
     fname = create_xml_video_file(course, my_class)
+    add_lecture(lecture, fname)
     add_video(video, fname)
+
+def _add_audio_to_xml(course, my_class, lecture, audio):
+    fname = create_xml_video_file(course, my_class)
+    add_lecture(lecture, fname)
+    add_audio(audio, fname)
+
+def _remove_video_from_xml(course, my_class, video):
+    fname = get_videos_xml_name(course, my_class)
+    remove_video(video, fname)
+
+def _remove_audio_from_xml(course, my_class, audio):
+    fname = get_videos_xml_name(course, my_class)
+    remove_audio(audio, fname)
+            

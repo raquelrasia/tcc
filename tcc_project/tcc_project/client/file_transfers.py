@@ -5,24 +5,32 @@ from models import Course, Class, Video
 ROOT = 'files/'
 BASE_URL = "http://127.0.0.1:8000/"
 VIDEO_UPLOAD_URL = "api/video_upload/"
+AUDIO_UPLOAD_URL = "api/audio_upload/"
 TEACHER_INFO_DOWNLOAD_URL = 'api/teacher_xml_download/'
 VIDEO_INFO_DOWNLOAD_URL = 'api/video_xml_download/'
+import platform
 
 class FileTransfers():
     def __init__(self, client):
         self.client = client
 
-    def file_upload(self, video, course, my_class, tag_list):
+    def file_upload(self, file, course, my_class, tag_list, video_audio):
+        date = os.path.getmtime(ROOT + file.path)
+        print(date)
         csrftoken = self.client.cookies['csrftoken']
-        print(video.date)
         payload = {'course_code': course.code, 'class_name': my_class.name, 'class_year': my_class.year, 
-                   'class_semester': my_class.semester, 'tags': 'teste', 'date': datetime.datetime.strptime(video.date, "%d-%m-%Y"), 
+                   'class_semester': my_class.semester, 'tags': 'teste', 'date': datetime.datetime.strptime(file.date, "%d-%m-%Y"), 
                    'csrfmiddlewaretoken': csrftoken}
         files = {
-             'file': (os.path.basename(ROOT + video.path), open(ROOT + video.path, 'rb'), 'application/octet-stream')
+             'file': (os.path.basename(ROOT + file.path), open(ROOT + file.path, 'rb'), 'application/octet-stream')
         }
 
-        r = requests.post(BASE_URL + VIDEO_UPLOAD_URL, data=payload, files=files, headers=dict(Referer= BASE_URL + VIDEO_UPLOAD_URL))
+        if video_audio == "video":
+            url = VIDEO_UPLOAD_URL
+        elif video_audio == "audio":
+            url = AUDIO_UPLOAD_URL
+
+        r = requests.post(BASE_URL + url, data=payload, files=files, headers=dict(Referer= BASE_URL + url))
         print(r.json())
 
     def teacher_file_download(self, client, username):
@@ -64,3 +72,5 @@ class FileTransfers():
                 if chunk: # filter out keep-alive new chunks
                     f.write(chunk)
         return remote_filename
+
+            

@@ -2,11 +2,16 @@ import xml.etree.cElementTree as ET
 import os
 import datetime
 from xml.dom import minidom
-from models import Video, Audio
+from models import Video, Audio, MEDIA_ROOT
 
+
+
+def get_course_class_path(course, my_class):
+    path = course.code +'/'+ my_class.name + '/' + str(my_class.year) + '_' + my_class.semester + '/'
+    return path
 
 def get_videos_xml_name(course, my_class):
-    path = MEDIA_ROOT +'videos/'+ get_course_class_path(course, my_class)
+    path = MEDIA_ROOT +'/'+ get_course_class_path(course, my_class)
     names_split = path.split('/')
     name = names_split[-2] + names_split[-1]
     fname =  path + name + '.xml'
@@ -99,8 +104,6 @@ def remove_audio(audio, fname):
             for class_et in course_et.findall('class'):
                 if my_class.name == class_et.get('name'):
                     for lecture_et in class_et.findall('lecture'):
-                        print('recorder lecture date', lecture_et.get('date'))
-                        print('my lecture date', lecture.date_name)
                         if lecture.date_name == lecture_et.get('date'):
                             for audio_et in lecture_et.findall('audio'):
                                 lecture_et.remove(audio_et)

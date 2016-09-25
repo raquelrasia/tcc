@@ -1,6 +1,8 @@
 import sys
 from xml_handler_client import *
 from models import *
+from client import Client
+
 
 if len(sys.argv) != 8:
   print(len(sys.argv))
@@ -23,4 +25,8 @@ fname = create_xml_video_file(course, my_class)
 add_lecture(lecture, fname)
 add_video(video, fname )
 add_audio(audio, fname )
-sys.exit('file written')
+print('file written')
+print('connecting')
+client_connection = Client('luis', ' ', course, my_class, lecture, video, audio)
+
+sys.exit('connection ended')

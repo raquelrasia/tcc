@@ -2,7 +2,7 @@ import xml.etree.cElementTree as ET
 import os
 import datetime
 from xml.dom import minidom
-from models import Video, Audio, MEDIA_ROOT
+from models import Video, Audio, Lecture, MEDIA_ROOT
 
 
 
@@ -193,13 +193,19 @@ def add_lecture(lecture, fname):
     tree = ET.parse(fname)
     root = tree.getroot()
     existing_class_course = False
+    lecture_exists = False
     for course_et in root.findall('course'):
         if course_et.get('code') == course.code:
             for class_et in course_et.findall('class'):
                 if my_class.name == class_et.get('name'):
-                    existing_class_course = True
-                    lecture_et = ET.SubElement(class_et, 'lecture')
-                    lecture_et.set('date', str(lecture.date.strftime('%d-%m-%Y')))
+                    for lecture_et in class_et.findall('lecture'):
+                        if(lecture_et.get('date') == lecture.date_name):
+                            lecture_exists = True
+                            break
+                    if not lecture_exists:
+                        existing_class_course = True
+                        lecture_et = ET.SubElement(class_et, 'lecture')
+                        lecture_et.set('date', str(lecture.date.strftime('%d-%m-%Y')))
     if existing_class_course:
         f = open(fname, 'w')
         ET.tostring(root)
@@ -207,6 +213,7 @@ def add_lecture(lecture, fname):
         #f.write(ET.tostring(root))
         f.write(ET.tostring(root))#ET.tostring(root))
         f.close()
+
 
 
 def _add_class( course_node, my_class):
@@ -257,17 +264,30 @@ def compare_files( f_remote, f_local, course, my_class):
     local_video_list = list()
     remote_video_list, remote_audio_list = _return_video_audio_list(f_remote, course, my_class)
     local_video_list, local_audio_list = _return_video_audio_list(f_local, course, my_class)
+    video_found = False
+    audio_found = False
     for video in local_video_list:
-        if video not in remote_video_list:
+        video_found = False
+        for video_remote in remote_video_list:
+            if video.file.name == video_remote.file.name:
+                video_found = True
+                break
+        if not video_found and video not in missing_video_files:
             #file needs to be uploaded
-            print ('missing video', video)
+            print ('missing video', video.file.name)
             missing_video_files.append(video)
     for audio in local_audio_list:
-        if audio not in remote_audio_list:
+        audio_found = False
+        for audio_remote in remote_audio_list:
+            if audio.audio_file.name == audio_remote.audio_file.name:
+                audio_found = True
+                break
+        if not audio_found and audio not in missing_audio_files:
             #file needs to be uploaded
-            print ('missing audio', video)
+            print ('missing audio', audio.audio_file.name)
             missing_audio_files.append(audio)
     return missing_video_files, missing_audio_files 
+
 
 def _return_video_audio_list( fname, course, my_class):
     tree = ET.parse(fname)
@@ -285,16 +305,30 @@ def _return_video_audio_list( fname, course, my_class):
                     correct_class = True
                     for lecture_et in class_et.findall('lecture'):
                         date = lecture_et.get('date')
+                        lecture = Lecture(date_name = date, my_class = my_class)
                         for video_et in lecture_et.findall('video'):
                             path = video_et.get('path')
-                            video = Video(course, my_class, date, {'total_path' : path},) 
+                            video = Video({'total_path' : path}, lecture = lecture) 
                             video_list.append(video)
                         for audio_et in lecture_et.findall('audio'):
                             path = audio_et.get('path')
-                            audio = Audio(course, my_class, date, {'total_path' : path}) 
+                            audio = Audio({'total_path' : path}, lecture = lecture) 
                             audio_list.append(audio)
     if not correct_course:
         return -1
     if not correct_class:
         return -2
     return video_list, audio_list
+
+def prettify_all(fname):
+    tree = ET.parse(fname)
+    root = tree.getroot()
+    prettified = _prettify(root)
+    return prettified
+
+def _prettify(elem):
+    """Return a pretty-printed XML string for the Element.
+    """
+    rough_string = ET.tostring(elem, 'utf-8')
+    reparsed = minidom.parseString(rough_string)
+    return reparsed.toprettyxml(indent="  ")

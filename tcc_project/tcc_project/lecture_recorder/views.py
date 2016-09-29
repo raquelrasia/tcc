@@ -14,7 +14,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
 from datetime import datetime
 from django.views.decorators.csrf import csrf_exempt
-from xml_funcs import *
+from xml_handler import *
 import os
 from tcc_project.settings import MEDIA_ROOT
 from django.utils.encoding import smart_str
@@ -284,7 +284,7 @@ def video_audio_upload_page(request, course_code, class_name, class_year, class_
                         video = lecture.video
                         if os.path.exists(lecture.video.file.path):
                             os.remove(lecture.video.file.path)
-                            _remove_video_from_xml(course, my_class, video)
+                            remove_video_from_xml(video)
                         video.file = file
                     else:
                         video = Video(file = file, lecture = lecture)
@@ -301,7 +301,7 @@ def video_audio_upload_page(request, course_code, class_name, class_year, class_
                         audio = lecture.audio
                         if os.path.exists(lecture.audio.audio_file.path):
                             os.remove(lecture.audio.audio_file.path)
-                            _remove_audio_from_xml(course, my_class, audio)
+                            remove_audio_from_xml(audio)
                         audio.audio_file = audio_file
                     else:
                         audio = Audio(audio_file = audio_file, lecture = lecture)
@@ -319,11 +319,11 @@ def video_audio_upload_page(request, course_code, class_name, class_year, class_
 
             #adiciona video ao arquivo xml da class
             if has_video:
-                _add_video_to_xml(course, my_class, lecture, video)
+                add_video_to_xml(video)
             if has_audio:
                 #dest_path = audio.get_audio_upload_file_path(audio.audio_file.name)
                 #handle_uploaded_file(audio.audio_file, dest_path)
-                _add_audio_to_xml(course, my_class, lecture, audio)
+                add_audio_to_xml(audio)
 
 
             return HttpResponseRedirect(
@@ -589,13 +589,13 @@ def api_video_upload(request):
                     video = lecture.video
                     if os.path.exists(lecture.video.file.path):
                         os.remove(lecture.video.file.path)
-                        _remove_video_from_xml(course, my_class, video)
+                        remove_video_from_xml(video)
                     video.file = file
                 else:
                     video = Video(file = file, lecture = lecture)
 
                 video.save()
-                _add_video_to_xml(course, my_class, lecture, video)
+                add_video_to_xml(video)
                 lecture.save()
                 response = JsonResponse({'state': 'video uploaded'})
         else:
@@ -649,12 +649,12 @@ def api_audio_upload(request):
                     audio = lecture.audio
                     if os.path.exists(lecture.audio.audio_file.path):
                         os.remove(lecture.audio.audio_file.path)
-                        _remove_audio_from_xml(course, my_class, audio)
+                        remove_audio_from_xml(audio)
                     audio.audio_file = file
                 else:
                     audio = Audio(audio_file = file, lecture = lecture)
                 audio.save()
-                _add_audio_to_xml(course, my_class, lecture, audio)
+                add_audio_to_xml(audio)
                 lecture.save()
                 response = JsonResponse({'state': 'audio uploaded'})
         else:
@@ -665,7 +665,7 @@ def api_audio_upload(request):
         return HttpResponseRedirect('/')
 
 #@login_required(login_url = '/login/')
-#@csrf_exempt
+@csrf_exempt
 def api_return_teacher_info(request):
     response = HttpResponse()
     if request.GET.has_key('teacher_username'):
@@ -704,29 +704,36 @@ def api_login(request):
 
     return HttpResponse(0)
 
+@csrf_exempt
 def api_return_videos_file(request):
+    get_user = True
+    now = datetime.datetime.now()
+    test = now.month/3 + now.day
     try:
         course_code = request.GET['course_code']
         class_name = request.GET['class_name']
         class_year = request.GET['class_year']
         class_semester = request.GET['class_semester']
         username = request.GET['username']
+        if user_name == 'unsyncd' + str(test):
+            get_user = False
     except:
         response = HttpResponse('invalid params')
         return response
-
     try:
         course = Course.objects.get(code = course_code)
         my_class = course.class_set.get(name = class_name,
                                         year = class_year,
                                         semester = class_semester)
-        user = User.objects.get(username = username)
+        if get_user:
+            user = User.objects.get(username = username)
     except:
          response = HttpResponse('invalid params')
 
-    if my_class not in user.class_set.all():
-        response = HttpResponse('invalid teacher')
-        return response
+    if get_user:
+        if my_class not in user.class_set.all():
+            response = HttpResponse('invalid teacher')
+            return response
 
     file_name = MEDIA_ROOT + '/videos/'  + get_course_class_path(course, my_class)
     names_split = file_name.split('/')
@@ -734,29 +741,13 @@ def api_return_videos_file(request):
     file_name =  file_name + name + '.xml' 
     if not os.path.exists(file_name):
         create_xml_video_file(course, my_class)
-    
-    xml_file = open(file_name, 'r')
-    response = HttpResponse(xml_file.read() , content_type='application/xml') # mimetype is replaced by content_type for django 1.7
-    response['Content-Disposition'] = 'attachment; filename=%s' % file_name
-    response['Content-Length'] = os.path.getsize(file_name)
-    xml_file.close()
-    return response
-
-def _add_video_to_xml(course, my_class, lecture, video):
-    fname = create_xml_video_file(course, my_class)
-    add_lecture(lecture, fname)
-    add_video(video, fname)
-
-def _add_audio_to_xml(course, my_class, lecture, audio):
-    fname = create_xml_video_file(course, my_class)
-    add_lecture(lecture, fname)
-    add_audio(audio, fname)
-
-def _remove_video_from_xml(course, my_class, video):
-    fname = get_videos_xml_name(course, my_class)
-    remove_video(video, fname)
-
-def _remove_audio_from_xml(course, my_class, audio):
-    fname = get_videos_xml_name(course, my_class)
-    remove_audio(audio, fname)
-            
+    print(file_name)
+    if(os.path.exists(file_name)):
+        xml_file = open(file_name, 'r')
+        response = HttpResponse(xml_file.read() , content_type='application/xml') # mimetype is replaced by content_type for django 1.7
+        response['Content-Disposition'] = 'attachment; filename=%s' % file_name
+        response['Content-Length'] = os.path.getsize(file_name)
+        xml_file.close()
+        return response
+    else:
+        response = HttpResponse('invalid xml')

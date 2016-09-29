@@ -16,6 +16,7 @@ LoginDialog::LoginDialog(QWidget *parent) :
         QString xml_path = make_xml_path() + username + ".xml";
         MainDialog mdialog ;
         mdialog.set_xml_path(xml_path);
+        mdialog.set_username(username);
         mdialog.setModal(true);
         mdialog.exec() ;
     }
@@ -64,6 +65,7 @@ void LoginDialog::on_pushButton_clicked()
             write_auth_xml();
             MainDialog mdialog ;
             mdialog.set_xml_path(xml_path);
+            mdialog.set_username(username);
             mdialog.setModal(true);
             mdialog.exec() ;
 

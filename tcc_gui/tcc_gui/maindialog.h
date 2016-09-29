@@ -29,6 +29,7 @@ public:
     ~MainDialog();
     bool fileExists(QString path) ;
     void set_xml_path( QString path);
+    void set_username( QString usrname);
     void closeEvent(QCloseEvent *event);
     bool write_remote_xml_cmd_file(QString video_name, QString audio_name);
 private slots:
@@ -65,8 +66,9 @@ private:
     QString xml_path;
     QString program_dir ;
     QString xml_video_file_name;
+    QString username;
     uint8_t number_of_recordings ;
-
+    QProcess * transfer_files;
     QFont font ;
 
     bool dialog_ended ;

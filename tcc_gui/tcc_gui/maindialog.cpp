@@ -264,7 +264,7 @@ void MainDialog::on_pushButton_3_clicked()
                     return;
 
             QTextStream outcmds(&bat_file);
-            outcmds << "plink -ssh pi@169.254.96.87 -pw raspberry \"mkdir -p /home/pi/videos/" << course_code +
+            outcmds << "plink -ssh pi@169.254.96.87 -pw raspberry -batch  \"mkdir -p /home/pi/videos/" << course_code +
                        QString("/") + class_code + QString("/") + year+QString("_") +semester + QString("/") + "\"\n" +
                        QString("pscp -pw raspberry ") + rec_dir + filename + video_file_extension + QString(" ") +
                        rec_dir + filename + audio_file_extension + QString(" ") + QString(" pi@169.254.96.87:videos/") +
@@ -286,7 +286,7 @@ void MainDialog::on_pushButton_3_clicked()
                     return;
 
             QTextStream outcmds(&bat_file);
-            outcmds << "plink -ssh pi@169.254.96.87 -pw raspberry \"mkdir -p /home/pi/videos/" << course_code + QString("/") +
+            outcmds << "plink -ssh pi@169.254.96.87 -pw raspberry -batch \"mkdir -p /home/pi/videos/" << course_code + QString("/") +
                     class_code + QString("/") + year + QString("_") + semester + QString("/") + "\"\n" +
                     QString("pscp -pw raspberry ") + rec_dir + filename + video_file_extension + QString(" ") +
                     rec_dir + filename + audio_file_extension + QString(" ") +
@@ -395,9 +395,9 @@ void MainDialog::on_pushButton_3_clicked()
         ui->label->setStyleSheet("color: orange");
         ui->label->setText("Status: Please Wait, Transfering Files...");
 
-        QProcess * transfer = new QProcess(this) ;
-        QObject::connect(transfer, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(on_finishedTransfer(int , QProcess::ExitStatus ))) ;
-        transfer->start(program_dir + QString("config/") + QString("transfer.bat")) ;
+        transfer_files = new QProcess(this) ;
+        QObject::connect(transfer_files, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(on_finishedTransfer(int , QProcess::ExitStatus ))) ;
+        transfer_files->start(program_dir + QString("config/") + QString("transfer.bat")) ;
         //transfer->waitForFinished();
         //transfer->close();
         ui->label->setStyleSheet("color: orange");
@@ -636,6 +636,11 @@ void MainDialog::on_pushButton_6_clicked() {
     qDebug()<< xml_path;
  }
 
+ void MainDialog::set_username( QString usrname)
+ {
+    username = usrname;
+ }
+
  bool MainDialog::write_remote_xml_cmd_file(QString video_name, QString audio_name)
  {
      QDate date = QDate::currentDate();
@@ -645,10 +650,10 @@ void MainDialog::on_pushButton_6_clicked() {
          if (!bat_file.open(QIODevice::WriteOnly | QIODevice::Text))
              return false;
      QTextStream outcmds(&bat_file);
-     outcmds << "plink -ssh pi@169.254.96.87 -pw raspberry \"python /home/pi/client/video_xml_manager.py "
+     outcmds << "plink -ssh pi@169.254.96.87 -pw raspberry -batch \"python /home/pi/client/video_xml_manager.py "
              << course_code + QString(" ") + class_code + QString(" ")+ year + QString(" ") +
                 semester +QString(" ") +lecture_date +QString(" ") + video_name + QString(" ") +
-                audio_name  << "\n" ;
+                audio_name + QString(" ") + username <<" \n pause \n" ;
      bat_file.close();
      return true;
  }
@@ -657,7 +662,7 @@ void MainDialog::on_pushButton_6_clicked() {
  {
     qDebug() << "Trasnfer Finished";
     QProcess * transfer = new QProcess(this) ;
-    //QObject::connect(transfer, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(on_finishedTransfer(int , QProcess::ExitStatus ))) ;
     transfer->startDetached(program_dir + QString("config/") + QString("xml_sync.bat")) ;
+    transfer_files->close();
  }
 

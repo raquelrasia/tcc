@@ -146,8 +146,10 @@ MyCourseDialog::~MyCourseDialog()
 void MyCourseDialog::on_listWidget_itemSelectionChanged()
 {
     ui->listWidget_2->clear();
-
     CurrentClassList.clear();
+    ClassesNamesList.clear();
+    YearsNamesList.clear();
+    SemestersNamesList.clear();
 
     QDomElement teacher = root.firstChildElement() ;
     // Class Selection Section

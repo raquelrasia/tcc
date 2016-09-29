@@ -2,9 +2,10 @@ import requests
 import os
 import datetime
 from models import Course, Class, Video
-from xml_handler_client import prettify_all
+from xml_handler import prettify_all
 from includes import *
 import platform
+
 
 class FileTransfers():
     def __init__(self, client):
@@ -32,7 +33,14 @@ class FileTransfers():
             url = AUDIO_UPLOAD_URL
 
         r = requests.post(BASE_URL + url, data=payload, files=files, headers=dict(Referer= BASE_URL + url))
-        print(r.json())
+        try:
+            print(r.json())
+            if r.json()['state'] == 'video uploaded' or r.json()['state'] == 'audio uploaded':
+                return 1
+            else:
+                return 0
+        except:
+            return -1
 
     def teacher_file_download(self, client, username):
         #csrftoken = self.client.cookies['csrftoken']

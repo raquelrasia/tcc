@@ -1,6 +1,7 @@
 import datetime
 import os
-MEDIA_ROOT = 'videos'
+from includes import *
+
 class Course():
     def __init__(self, course_code):
         self.code = course_code
@@ -36,7 +37,7 @@ class Video():
         self.name = os.path.basename(self.path)
         self.lecture = lecture
     def _get_video_path(self, course, my_class):
-        path =  MEDIA_ROOT + '/'+course.code +'/'+ my_class.name + '/' + str(my_class.year) + '_' + str(my_class.semester) + '/'
+        path =  'videos' + '/'+course.code +'/'+ my_class.name + '/' + str(my_class.year) + '_' + str(my_class.semester) + '/'
         return path
 
 class Audio():
@@ -51,5 +52,5 @@ class Audio():
         self.audio_name = os.path.basename(self.audio_path)
         self.lecture = lecture
     def _get_audio_path(self, course, my_class):
-        path = MEDIA_ROOT + '/'+ course.code +'/'+ my_class.name + '/' + str(my_class.year) + '_' + str(my_class.semester) + '/'
+        path = 'videos' + '/'+ course.code +'/'+ my_class.name + '/' + str(my_class.year) + '_' + str(my_class.semester) + '/'
         return path

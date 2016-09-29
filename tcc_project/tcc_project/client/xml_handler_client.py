@@ -35,6 +35,8 @@ def create_xml_video_file(course, my_class):
     return fname
 
 def add_video(video, fname):
+    if find_video(video, fname)
+        return 0
     lecture = video.lecture
     my_class = lecture.my_class
     course = my_class.course
@@ -60,8 +62,13 @@ def add_video(video, fname):
         #f.write(ET.tostring(root))
         f.write(ET.tostring(root))#ET.tostring(root))
         f.close()
+        return 1
+    else:
+        return -1
 
 def add_audio(audio, fname):
+    if find_audio(audio, fname)
+        return 0
     lecture = audio.lecture
     my_class = lecture.my_class
     course = my_class.course
@@ -87,8 +94,9 @@ def add_audio(audio, fname):
         #f.write(ET.tostring(root))
         f.write(ET.tostring(root))#ET.tostring(root))
         f.close()
-
-
+        return 1
+    else:
+        return -1
 def remove_audio(audio, fname):
     lecture = audio.lecture
     my_class = lecture.my_class
@@ -106,8 +114,10 @@ def remove_audio(audio, fname):
                     for lecture_et in class_et.findall('lecture'):
                         if lecture.date_name == lecture_et.get('date'):
                             for audio_et in lecture_et.findall('audio'):
-                                lecture_et.remove(audio_et)
-                                exists = True
+                                if audio_et.get('name') == audio.audio_name and
+                                   audio_et.get('path') == audio.audio_file.name:
+                                    lecture_et.remove(audio_et)
+                                    exists = True
     if exists:
         f = open(fname, 'w')
         ET.tostring(root)
@@ -133,8 +143,10 @@ def remove_video(video, fname):
                     for lecture_et in class_et.findall('lecture'):
                         if lecture.date_name == lecture_et.get('date'):
                             for video_et in lecture_et.findall('video'):
-                                exists = True
-                                lecture_et.remove(video_et)
+                                if video_et.get('name') == video.name and
+                                   video_et.get('path') == video.file.name:
+                                    lecture_et.remove(video_et)
+                                    exists = True
     if exists:
         f = open(fname, 'w')
         ET.tostring(root)
@@ -143,7 +155,51 @@ def remove_video(video, fname):
         f.write(ET.tostring(root))#ET.tostring(root))
         f.close()
 
+def find_audio(audio, fname):
+    lecture = audio.lecture
+    my_class = lecture.my_class
+    course = my_class.course
+    if not os.path.exists(fname) or os.path.getsize(fname) == 0:
+        return -1
 
+    tree = ET.parse(fname)
+    root = tree.getroot()
+    exists = False
+    for course_et in root.findall('course'):
+        if course_et.get('code') == course.code:
+            for class_et in course_et.findall('class'):
+                if my_class.name == class_et.get('name'):
+                    for lecture_et in class_et.findall('lecture'):
+                        if lecture.date_name == lecture_et.get('date'):
+                            for audio_et in lecture_et.findall('audio'):
+                                if audio_et.get('name') == audio.audio_name and
+                                   audio_et.get('path') == audio.audio_file.name:
+                                   exists = True
+                                   break
+    return exists
+
+def find_video(video, fname):
+    lecture = video.lecture
+    my_class = lecture.my_class
+    course = my_class.course
+    if not os.path.exists(fname) or os.path.getsize(fname) == 0:
+        return -1
+        
+    tree = ET.parse(fname)
+    root = tree.getroot()
+    exists = False
+    for course_et in root.findall('course'):
+        if course_et.get('code') == course.code:
+            for class_et in course_et.findall('class'):
+                if my_class.name == class_et.get('name'):
+                    for lecture_et in class_et.findall('lecture'):
+                        if lecture.date_name == lecture_et.get('date'):
+                            for video_et in lecture_et.findall('video'):
+                                if video_et.get('name') == video.name and
+                                   video_et.get('path') == video.file.name:
+                                    exists = True
+                                    break
+    return exists
 
 def create_xml_teacher_file(user): 
     f_name = MEDIA_ROOT +'teachers/'+ user.username
@@ -221,36 +277,7 @@ def _add_class( course_node, my_class):
     class_et.set('name', my_class.name)
     class_et.set('year', str(my_class.year))
     class_et.set('semester', str(my_class.semester))
-
-
      
-def remove_video(video, fname):
-    lecture = video.lecture
-    my_class = lecture.my_class
-    course = my_class.course
-    tree = ET.parse(fname)
-    root = tree.getroot()
-    existing_class_course = False
-    for course_et in root.findall('course'):
-        if course_et.get('code') == course.code:
-            for class_et in course_et.findall('class'):
-                if my_class.name == class_et.get('name'):
-                    existing_class_course = True
-                    video_et = ET.SubElement(class_et, 'video')
-                    video_et.set('name', video.name)
-                    video_et.set( 'path', video.file.name)
-                    audio_et = ET.SubElement(class_et, 'audio')
-                    audio_et.set( 'audio_path', video.audio_file.name)
-                    size = ET.SubElement(video_et, 'size')
-                    size.text = str(video.file.size)
-    if existing_class_course:
-        f = open(fname, 'w')
-        ET.tostring(root)
-        #prettify(video_et)
-        #f.write(ET.tostring(root))
-        f.write(ET.tostring(root))#ET.tostring(root))
-        f.close()
-
 
 def compare_files( f_remote, f_local, course, my_class):
     print(os.path.abspath(f_remote))

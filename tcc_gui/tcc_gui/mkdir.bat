@@ -1,1 +1,0 @@
-pscp -r C:/Users/luigu/Videos/IF66D/ pi@169.254.96.87:Videos/

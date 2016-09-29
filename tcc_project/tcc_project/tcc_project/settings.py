@@ -32,6 +32,9 @@ MEDIA_ROOT = 'tcc_project/files/' #os.path.join(BASE_DIR, 'tcc_project/videos')
 DATE_INPUT_FORMATS = ('%d-%m-%Y')
 # Application definition
 
+#in settings.py
+AUTH_PROFILE_MODULE = 'YOURAPP.UserProfile'
+
 
 INSTALLED_APPS = (
     'django.contrib.admin',

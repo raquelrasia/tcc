@@ -14,12 +14,13 @@ class MyCourseDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit MyCourseDialog(QWidget *parent = 0);
+    explicit MyCourseDialog(QWidget *parent = 0, QString xml_path = " ");
     ~MyCourseDialog();
 
     QString get_current_course() ;
     QString get_current_class() ;
     QString get_current_semester() ;
+    QString get_current_year();
     QString get_rec_dir() ;
     QString get_dir_videos() ;
     QString get_filename() ;
@@ -43,6 +44,9 @@ private:
     QStringList CourseList ;
     QStringList CourseIDList ;
     QStringList CurrentClassList ;
+    QStringList ClassesNamesList;
+    QStringList YearsNamesList;
+    QStringList SemestersNamesList;
 
     QString CurrentCourse ;
     QString CurrentClass ;
@@ -53,6 +57,7 @@ private:
     // Directory of the recording
     QString rec_dir ;
     QString semester ;
+    QString year ;
     QString filename ;
 
     QDate date ;

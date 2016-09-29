@@ -201,7 +201,7 @@ void MainDialog::on_pushButton_clicked()
 
             semester = mcDialog.get_current_semester() ;
             filename = mcDialog.get_filename() ;
-
+            year = mcDialog.get_current_year();
             MyDialog mDialog ;
             mDialog.setModal(true) ;
             mDialog.exec() ;
@@ -222,7 +222,7 @@ void MainDialog::on_pushButton_clicked()
     // program automatically creates the recording
     // directory
     else {
-        MyCourseDialog mcDialog ;
+        MyCourseDialog mcDialog(0, xml_path) ;
         mcDialog.setModal(true) ;
         mcDialog.exec() ;
 
@@ -241,6 +241,7 @@ void MainDialog::on_pushButton_clicked()
             dir_videos = mcDialog.get_dir_videos() ;
             semester = mcDialog.get_current_semester() ;
             filename = mcDialog.get_filename() ;
+            year = mcDialog.get_current_year();
         }
     }
 }
@@ -263,11 +264,11 @@ void MainDialog::on_pushButton_3_clicked()
                     return;
 
             QTextStream outcmds(&bat_file);
-            outcmds << "plink -ssh pi@169.254.96.87 -pw raspberry \"mkdir -p /home/pi/Videos/" << course_code +
-                       QString("/") + class_code + QString("/") + semester + QString("/") + "\"\n" +
+            outcmds << "plink -ssh pi@169.254.96.87 -pw raspberry -batch  \"mkdir -p /home/pi/videos/" << course_code +
+                       QString("/") + class_code + QString("/") + year+QString("_") +semester + QString("/") + "\"\n" +
                        QString("pscp -pw raspberry ") + rec_dir + filename + video_file_extension + QString(" ") +
-                       rec_dir + filename + audio_file_extension + QString(" pi@169.254.96.87:Videos/") +
-                       course_code + QString("/") + class_code + QString("/") + semester + QString("/")  << "\n" ;
+                       rec_dir + filename + audio_file_extension + QString(" ") + QString(" pi@169.254.96.87:videos/") +
+                       course_code + QString("/") + class_code + QString("/") +  year+QString("_")+ semester + QString("/")  << "\n" ;
             bat_file.close();
             /**************************************************************************/
         }
@@ -285,12 +286,12 @@ void MainDialog::on_pushButton_3_clicked()
                     return;
 
             QTextStream outcmds(&bat_file);
-            outcmds << "plink -ssh pi@169.254.96.87 -pw raspberry \"mkdir -p /home/pi/Videos/" << course_code + QString("/") +
-                    class_code + QString("/") + semester + QString("/") + "\"\n" +
+            outcmds << "plink -ssh pi@169.254.96.87 -pw raspberry -batch \"mkdir -p /home/pi/videos/" << course_code + QString("/") +
+                    class_code + QString("/") + year + QString("_") + semester + QString("/") + "\"\n" +
                     QString("pscp -pw raspberry ") + rec_dir + filename + video_file_extension + QString(" ") +
-                    rec_dir + filename + audio_file_extension +
-                    QString(" pi@169.254.96.87:Videos/") + course_code + QString("/") +
-                    class_code + QString("/") + semester + QString("/")  << "\n" ;
+                    rec_dir + filename + audio_file_extension + QString(" ") +
+                    QString(" pi@169.254.96.87:videos/") + course_code + QString("/") +
+                    class_code + QString("/") +  year+QString("_") +semester + QString("/")  << "\n" ;
             bat_file.close();
             /**************************************************************************/
         }
@@ -364,7 +365,7 @@ void MainDialog::on_pushButton_3_clicked()
         ffmpeg_cat_audio->close();
         /**************************************************************************/
     }
-
+    write_remote_xml_cmd_file(filename + video_file_extension, filename + audio_file_extension);
     ui->pushButton->setEnabled(true) ;
     ui->pushButton_2->setEnabled(false) ;
     ui->pushButton_3->setEnabled(false) ;
@@ -394,17 +395,13 @@ void MainDialog::on_pushButton_3_clicked()
         ui->label->setStyleSheet("color: orange");
         ui->label->setText("Status: Please Wait, Transfering Files...");
 
-        QProcess * transfer = new QProcess(this) ;
-        transfer->startDetached(program_dir + QString("config/") + QString("transfer.bat")) ;
-
+        transfer_files = new QProcess(this) ;
+        QObject::connect(transfer_files, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(on_finishedTransfer(int , QProcess::ExitStatus ))) ;
+        transfer_files->start(program_dir + QString("config/") + QString("transfer.bat")) ;
+        //transfer->waitForFinished();
+        //transfer->close();
         ui->label->setStyleSheet("color: orange");
         ui->label->setText("Status: Lecture Finished");
-
-        /**************** Upload Routine Here ****************/
-        /**************** Upload Routine Here ****************/
-        /**************** Upload Routine Here ****************/
-        /**************** Upload Routine Here ****************/
-        /**************** Upload Routine Here ****************/
     }
     else if(ret == QMessageBox::No) {
         /****** Removes trash files, i.e., the text aux files and the video and ******/
@@ -503,7 +500,7 @@ void MainDialog::on_pushButton_2_clicked()
 
                 // -i stands for input. So in this case, we have two inputs, a screen and a microphone
                 << "-i"
-                << "video=screen-capture-recorder:audio=Internal Microphone (Cirrus Logic CS4208 (AB 94))"
+                << "video=screen-capture-recorder:audio=Microphone (Realtek High Definition Audio)"
                 // Video codec. It's the same as "-vcodec". CO-DEC stands for Compressor/Decompressor
 
                 << "-c:v"
@@ -563,7 +560,7 @@ void MainDialog::on_pushButton_2_clicked()
                 << "-f"
                 << "dshow"
                 << "-i"
-                << "audio=Internal Microphone (Cirrus Logic CS4208 (AB 94))"
+                << "audio=Microphone (Realtek High Definition Audio)"
                 << "-c:a"
                 << "libmp3lame"
                 << "-ab"
@@ -604,8 +601,8 @@ void MainDialog::on_pushButton_4_clicked() {
     ffmpeg_process->write("q");
     ffmpeg_process->closeWriteChannel();
 
-    ffmpeg_process->waitForFinished() ;
-    ffmpeg_process->close();
+    //ffmpeg_process->waitForFinished() ;
+    //ffmpeg_process->close();
 }
 
 
@@ -632,3 +629,40 @@ void MainDialog::on_pushButton_6_clicked() {
     QProcess * rpi_cam = new QProcess(this) ;
     rpi_cam->startDetached(program_dir + QString("config/") + QString("rpi_cam.bat")) ;
 }
+
+ void MainDialog::set_xml_path(QString path)
+ {
+    xml_path = path;
+    qDebug()<< xml_path;
+ }
+
+ void MainDialog::set_username( QString usrname)
+ {
+    username = usrname;
+ }
+
+ bool MainDialog::write_remote_xml_cmd_file(QString video_name, QString audio_name)
+ {
+     QDate date = QDate::currentDate();
+     QString lecture_date = date.toString("dd-MM-yyyy") ;
+     QString transfer_cmds = program_dir + QString("config/") + QString("xml_sync.bat") ;
+     QFile bat_file(transfer_cmds);
+         if (!bat_file.open(QIODevice::WriteOnly | QIODevice::Text))
+             return false;
+     QTextStream outcmds(&bat_file);
+     outcmds << "plink -ssh pi@169.254.96.87 -pw raspberry -batch \"python /home/pi/client/video_xml_manager.py "
+             << course_code + QString(" ") + class_code + QString(" ")+ year + QString(" ") +
+                semester +QString(" ") +lecture_date +QString(" ") + video_name + QString(" ") +
+                audio_name + QString(" ") + username <<" \n pause \n" ;
+     bat_file.close();
+     return true;
+ }
+
+ void MainDialog::on_finishedTransfer(int exitCode, QProcess::ExitStatus exitStatus)
+ {
+    qDebug() << "Trasnfer Finished";
+    QProcess * transfer = new QProcess(this) ;
+    transfer->startDetached(program_dir + QString("config/") + QString("xml_sync.bat")) ;
+    transfer_files->close();
+ }
+

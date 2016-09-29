@@ -28,8 +28,10 @@ public:
     explicit MainDialog(QWidget *parent = 0);
     ~MainDialog();
     bool fileExists(QString path) ;
+    void set_xml_path( QString path);
+    void set_username( QString usrname);
     void closeEvent(QCloseEvent *event);
-
+    bool write_remote_xml_cmd_file(QString video_name, QString audio_name);
 private slots:
     void on_pushButton_clicked();
     void on_pushButton_2_clicked();
@@ -37,7 +39,7 @@ private slots:
     void on_pushButton_4_clicked();
     void on_pushButton_5_clicked();
     void on_pushButton_6_clicked();
-
+    void on_finishedTransfer(int exitCode, QProcess::ExitStatus exitStatus);
 private:
     Ui::MainDialog *ui;
     QProcess * ffmpeg_process ;
@@ -59,11 +61,14 @@ private:
     QString course_code ;
     QString class_code ;
     QString semester ;
+    QString year;
     QString fps ; // Frames per second
+    QString xml_path;
     QString program_dir ;
-
+    QString xml_video_file_name;
+    QString username;
     uint8_t number_of_recordings ;
-
+    QProcess * transfer_files;
     QFont font ;
 
     bool dialog_ended ;

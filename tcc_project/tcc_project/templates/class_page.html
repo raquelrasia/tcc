@@ -9,8 +9,10 @@ Professores(a): <a href="/user/{{ class.user_teacher.username }}"> {{ class.user
 </p>
 {%endblock%}
 {%block content%}
-	{% include "video_list.html"%}
- 	<form action="video_upload/">
-   	<input type="submit" value="Adicionar Video" />
+{%if is_class_teacher%}
+	{% include "lecture_list.html"%}
+ 	<form action="video_audio_upload/">
+   	<input type="submit" value="Adicionar Aula" />
 	</form>
+{%endif%}
 {%endblock%}

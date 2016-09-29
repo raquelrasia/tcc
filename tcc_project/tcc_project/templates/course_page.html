@@ -3,14 +3,10 @@
 {%block head%} {{ course.name }} - {{ course.code  }} 
 {%endblock%}
 {%block content%}
-<!--	{% include "video_list.html"%}
- 	<form action="/video_upload/">
-   	<input type="submit" value="Adicionar Video" />
-	</form> -->
 	{% include "class_list.html"%}
 	{% if show_button %}
 	<form action="class_save/">
-   	 <input type="submit" value="Adicionar Class" />
+   	 <input type="submit" value="Adicionar Turma" />
 	</form>
 	{% endif %}
 {%endblock%}

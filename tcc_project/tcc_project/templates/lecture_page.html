@@ -1,12 +1,16 @@
+<ul>
 {%if lecture.video %}
  	<li>
-		<a href="/video_view/{{ lecture.video.file.url|escape}}" class="title">
-		video </a>
+		Video <a href="/video_view/{{ lecture.video.file.url|escape}}" class="video_media">
+		[+] </a> <a href="" id=close_video>[-]</a>
+		<div id=video_place></div>
 	</li>
 {% endif %}
 {%if lecture.audio %}
 	<li>
-		<a href="/audio_view/{{ lecture.audio.audio_file.url|escape}}" class="title">
-		audio </a>	
+		Audio <a href="/audio_view/{{ lecture.audio.audio_file.url|escape}}" class="audio_media">
+		[+] </a> <a href="" id=close_audio>[-]</a>
+		<div id=audio_place></div>
 	</li>
 {% endif %}
+</ul>

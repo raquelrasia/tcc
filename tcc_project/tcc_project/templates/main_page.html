@@ -3,7 +3,7 @@
 {%block head%} {%endblock%}
 {%block content%}
 	{%if user.username%}
-	<h1> Bem vindo(a) {{ user.username }}!</h1>
+	<h1> Bem vindo(a)  {{ user.first_name }} {{ user.last_name }}!</h1>
 	<p>	Retome as aulas das suas disciplinas! </p>
 	{%else%}
 	<h1> Bem vindo(a)!</h1>

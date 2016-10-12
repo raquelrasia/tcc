@@ -7,7 +7,7 @@ from includes import *
 from os import listdir
 from os.path import isfile, join
 
-accepted_video_formats = ['mp4', 'mkv', 'ogv', 'webm']
+accepted_video_formats = ['mp4', 'mp3' ,'mkv', 'ogv', 'webm']
 accepted_audio_formats = ['mp3']
 
 class FilesComparsion():

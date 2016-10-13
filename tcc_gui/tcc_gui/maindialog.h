@@ -15,6 +15,7 @@
 #include <QNetworkInterface>
 #include <QMutex>
 #include <QCloseEvent>
+#include <QAudioDeviceInfo>
 
 namespace Ui {
 class MainDialog;
@@ -43,10 +44,6 @@ private slots:
 private:
     Ui::MainDialog *ui;
     QProcess * ffmpeg_process ;
-    //QProcess * ffmpeg_cat ;
-    //QProcess * netcat_mplayer_client ;
-    //QProcess * rpi_cam ;
-    //QProcess * transfer ;
 
     // Recording directory
     QString rec_dir ;
@@ -67,9 +64,14 @@ private:
     QString program_dir ;
     QString xml_video_file_name;
     QString username;
+    QString video_bit_rate ;
+
     uint8_t number_of_recordings ;
     QProcess * transfer_files;
     QFont font ;
+
+    QAudioDeviceInfo audio_device_info ;
+    QString audio_device_name ;
 
     bool dialog_ended ;
     bool autopath_dialog_ended ;

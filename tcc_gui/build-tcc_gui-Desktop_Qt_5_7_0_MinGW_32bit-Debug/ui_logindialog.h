@@ -38,18 +38,20 @@ public:
     QHBoxLayout *horizontalLayout_2;
     QLabel *label_2;
     QLineEdit *lineEdit_2;
+    QPushButton *ContinueSession;
+    QLabel *expire_label;
 
     void setupUi(QDialog *LoginDialog)
     {
         if (LoginDialog->objectName().isEmpty())
             LoginDialog->setObjectName(QStringLiteral("LoginDialog"));
-        LoginDialog->resize(640, 480);
+        LoginDialog->resize(644, 317);
         groupBox = new QGroupBox(LoginDialog);
         groupBox->setObjectName(QStringLiteral("groupBox"));
-        groupBox->setGeometry(QRect(10, 0, 621, 441));
+        groupBox->setGeometry(QRect(10, 0, 621, 301));
         pushButton = new QPushButton(groupBox);
         pushButton->setObjectName(QStringLiteral("pushButton"));
-        pushButton->setGeometry(QRect(250, 390, 101, 41));
+        pushButton->setGeometry(QRect(100, 230, 111, 41));
         verticalLayoutWidget = new QWidget(groupBox);
         verticalLayoutWidget->setObjectName(QStringLiteral("verticalLayoutWidget"));
         verticalLayoutWidget->setGeometry(QRect(10, 60, 601, 101));
@@ -91,6 +93,12 @@ public:
 
         verticalLayout_2->addLayout(horizontalLayout_2);
 
+        ContinueSession = new QPushButton(groupBox);
+        ContinueSession->setObjectName(QStringLiteral("ContinueSession"));
+        ContinueSession->setGeometry(QRect(400, 230, 111, 41));
+        expire_label = new QLabel(groupBox);
+        expire_label->setObjectName(QStringLiteral("expire_label"));
+        expire_label->setGeometry(QRect(140, 180, 341, 44));
 
         retranslateUi(LoginDialog);
 
@@ -104,6 +112,8 @@ public:
         pushButton->setText(QApplication::translate("LoginDialog", "Login", 0));
         label->setText(QApplication::translate("LoginDialog", "Login", 0));
         label_2->setText(QApplication::translate("LoginDialog", "Password", 0));
+        ContinueSession->setText(QApplication::translate("LoginDialog", "Continue Session", 0));
+        expire_label->setText(QApplication::translate("LoginDialog", "Your session will soon expire. Login to renew your session", 0));
     } // retranslateUi
 
 };

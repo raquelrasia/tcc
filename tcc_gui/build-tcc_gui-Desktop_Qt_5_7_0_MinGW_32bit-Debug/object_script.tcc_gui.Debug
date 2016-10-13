@@ -4,10 +4,9 @@ INPUT(
 ./debug/mycoursedialog.o
 ./debug/mydialog.o
 ./debug/maindialog.o
-./debug/qsshsocket.o
+./debug/networkconnection.o
 ./debug/moc_logindialog.o
 ./debug/moc_mycoursedialog.o
 ./debug/moc_mydialog.o
 ./debug/moc_maindialog.o
-./debug/moc_qsshsocket.o
 );

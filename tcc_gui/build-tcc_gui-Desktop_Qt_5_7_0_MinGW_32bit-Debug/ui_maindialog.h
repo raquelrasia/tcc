@@ -35,6 +35,8 @@ public:
     QCheckBox *checkBox_2;
     QPushButton *pushButton_4;
     QLabel *label;
+    QPushButton *pushButton_5;
+    QPushButton *pushButton_6;
 
     void setupUi(QDialog *MainDialog)
     {
@@ -79,7 +81,13 @@ public:
 
         label = new QLabel(MainDialog);
         label->setObjectName(QStringLiteral("label"));
-        label->setGeometry(QRect(60, 10, 431, 81));
+        label->setGeometry(QRect(10, 10, 621, 81));
+        pushButton_5 = new QPushButton(MainDialog);
+        pushButton_5->setObjectName(QStringLiteral("pushButton_5"));
+        pushButton_5->setGeometry(QRect(230, 400, 191, 41));
+        pushButton_6 = new QPushButton(MainDialog);
+        pushButton_6->setObjectName(QStringLiteral("pushButton_6"));
+        pushButton_6->setGeometry(QRect(40, 390, 121, 41));
 
         retranslateUi(MainDialog);
 
@@ -96,6 +104,8 @@ public:
         checkBox_2->setText(QApplication::translate("MainDialog", "Automatically Create Directories and Files", 0));
         pushButton_4->setText(QApplication::translate("MainDialog", "Stop Recording", 0));
         label->setText(QApplication::translate("MainDialog", "<html><head/><body><p><span style=\" font-size:12pt;\">Status:</span></p></body></html>", 0));
+        pushButton_5->setText(QApplication::translate("MainDialog", "Document Camera", 0));
+        pushButton_6->setText(QApplication::translate("MainDialog", "test", 0));
     } // retranslateUi
 
 };

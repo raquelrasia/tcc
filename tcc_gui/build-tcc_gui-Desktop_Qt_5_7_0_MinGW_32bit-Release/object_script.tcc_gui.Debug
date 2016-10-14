@@ -1,0 +1,12 @@
+INPUT(
+./debug\main.o
+./debug\logindialog.o
+./debug\mycoursedialog.o
+./debug\mydialog.o
+./debug\maindialog.o
+./debug\networkconnection.o
+./debug\moc_logindialog.o
+./debug\moc_mycoursedialog.o
+./debug\moc_mydialog.o
+./debug\moc_maindialog.o
+);

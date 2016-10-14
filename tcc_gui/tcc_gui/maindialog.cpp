@@ -40,26 +40,11 @@ void MainDialog::closeEvent(QCloseEvent *event) {
 
         /****************************************************************************/
 
-        /*********** Creates a text file with the audio files to be concatenated ***********/
-        QString audio_list = rec_dir + QString("audio_list.txt") ;
-        QFile fileaudio(audio_list);
-            if (!fileaudio.open(QIODevice::WriteOnly | QIODevice::Text))
-                return;
-
-        QTextStream outaudio(&fileaudio);
-        for (uint8_t count = 1; count <= number_of_recordings; count++) {
-            outaudio << "file '" << filename + QString::number(count) + audio_file_extension << "'\n";
-        }
-        fileaudio.close();
-
-        /****************************************************************************/
-
 
         /*********************** Concatenates video files ************************/
         QProcess * ffmpeg_cat_video = new QProcess(this) ;
         QStringList ffmpeg_video_cat_args ;
 
-                        /******************** Video ********************/
         ffmpeg_video_cat_args << "-y"
                               << "-f"
                               << "concat"
@@ -74,26 +59,6 @@ void MainDialog::closeEvent(QCloseEvent *event) {
         ffmpeg_cat_video->waitForFinished() ;
         ffmpeg_cat_video->close();
         /**************************************************************************/
-
-        /*********************** Concatenates Audio files ************************/
-        QProcess * ffmpeg_cat_audio = new QProcess(this) ;
-        QStringList ffmpeg_audio_cat_args ;
-
-                        /******************** Audio ********************/
-        ffmpeg_audio_cat_args << "-y"
-                              << "-f"
-                              << "concat"
-                              << "-i"
-                              << rec_dir + QString("audio_list.txt")
-                              << "-c"
-                              << "copy"
-                              << rec_dir + filename + audio_file_extension ;
-
-        //connect(ffmpeg_cat, SIGNAL(finished(int,QProcess::ExitStatus)), ffmpeg_cat, SLOT(deleteLater())) ;
-        ffmpeg_cat_audio->start("ffmpeg", ffmpeg_audio_cat_args) ;
-        ffmpeg_cat_audio->waitForFinished() ;
-        ffmpeg_cat_audio->close();
-        /**************************************************************************/
     }
 
     QProcess * network_setup_dynamic = new QProcess(this) ;
@@ -105,9 +70,7 @@ void MainDialog::closeEvent(QCloseEvent *event) {
 
     for (uint8_t count = 1; count <= number_of_recordings; count++) {
         QFile::remove(rec_dir + filename + QString::number(count) + video_file_extension) ;
-        QFile::remove(rec_dir + filename + QString::number(count) + audio_file_extension) ;
     }
-    QFile::remove(rec_dir + "audio_list.txt") ;
     QFile::remove(rec_dir + "video_list.txt") ;
 
     event->accept();
@@ -150,11 +113,15 @@ MainDialog::MainDialog(QWidget *parent) :
     // Initializes some variables
     dialog_ended = false ;
     number_of_recordings = 0 ;
-    fps = "3" ;
+    fps = "5" ;
+    video_bit_rate = "82k" ;
     audio_file_extension = QString(".mp3") ;
-    video_file_extension = QString(".webm") ;
+    video_file_extension = QString(".mp4") ;
 
     program_dir = QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + QString("/") + QString("LectureRecording/");
+
+    audio_device_info = QAudioDeviceInfo::defaultInputDevice() ;
+    audio_device_name = audio_device_info.deviceName() ;
 
     QProcess * network_setup_static = new QProcess(this) ;
 
@@ -310,26 +277,11 @@ void MainDialog::on_pushButton_3_clicked()
 
         /****************************************************************************/
 
-        /*********** Creates a text file with the audio files to be concatenated ***********/
-        QString audio_list = rec_dir + QString("audio_list.txt") ;
-        QFile fileaudio(audio_list);
-            if (!fileaudio.open(QIODevice::WriteOnly | QIODevice::Text))
-                return;
-
-        QTextStream outaudio(&fileaudio);
-        for (uint8_t count = 1; count <= number_of_recordings; count++) {
-            outaudio << "file '" << filename + QString::number(count) + audio_file_extension << "'\n";
-        }
-        fileaudio.close();
-
-        /****************************************************************************/
-
 
         /*********************** Concatenates video files ************************/
         QProcess * ffmpeg_cat_video = new QProcess(this) ;
         QStringList ffmpeg_video_cat_args ;
 
-                        /******************** Video ********************/
         ffmpeg_video_cat_args << "-y"
                               << "-f"
                               << "concat"
@@ -345,25 +297,23 @@ void MainDialog::on_pushButton_3_clicked()
         ffmpeg_cat_video->close();
         /**************************************************************************/
 
-        /*********************** Concatenates Audio files ************************/
-        QProcess * ffmpeg_cat_audio = new QProcess(this) ;
-        QStringList ffmpeg_audio_cat_args ;
+        /*********************** Extracts Audio Track from Video ************************/
+        QProcess * ffmpeg_ext_audio = new QProcess(this) ;
+        QStringList ffmpeg_ext_audio_args ;
 
-                        /******************** Audio ********************/
-        ffmpeg_audio_cat_args << "-y"
-                              << "-f"
-                              << "concat"
+        ffmpeg_ext_audio_args << "-y"
                               << "-i"
-                              << rec_dir + QString("audio_list.txt")
-                              << "-c"
+                              << rec_dir + filename + video_file_extension
+                              << "-vn"
+                              << "-acodec"
                               << "copy"
                               << rec_dir + filename + audio_file_extension ;
 
-        //connect(ffmpeg_cat, SIGNAL(finished(int,QProcess::ExitStatus)), ffmpeg_cat, SLOT(deleteLater())) ;
-        ffmpeg_cat_audio->start("ffmpeg", ffmpeg_audio_cat_args) ;
-        ffmpeg_cat_audio->waitForFinished() ;
-        ffmpeg_cat_audio->close();
+        ffmpeg_ext_audio->start("ffmpeg", ffmpeg_ext_audio_args) ;
+        ffmpeg_ext_audio->waitForFinished() ;
+        ffmpeg_ext_audio->close();
         /**************************************************************************/
+
     }
     write_remote_xml_cmd_file(filename + video_file_extension, filename + audio_file_extension);
     ui->pushButton->setEnabled(true) ;
@@ -387,9 +337,7 @@ void MainDialog::on_pushButton_3_clicked()
         /****** audio files before concatenation ******/
         for (uint8_t count = 1; count <= number_of_recordings; count++) {
             QFile::remove(rec_dir + filename + QString::number(count) + video_file_extension) ;
-            QFile::remove(rec_dir + filename + QString::number(count) + audio_file_extension) ;
         }
-        QFile::remove(rec_dir + "audio_list.txt") ;
         QFile::remove(rec_dir + "video_list.txt") ;
 
         ui->label->setStyleSheet("color: orange");
@@ -397,9 +345,11 @@ void MainDialog::on_pushButton_3_clicked()
 
         transfer_files = new QProcess(this) ;
         QObject::connect(transfer_files, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(on_finishedTransfer(int , QProcess::ExitStatus ))) ;
-        transfer_files->start(program_dir + QString("config/") + QString("transfer.bat")) ;
+        transfer_files->startDetached(program_dir + QString("config/") + QString("transfer.bat")) ;
         //transfer->waitForFinished();
         //transfer->close();
+
+
         ui->label->setStyleSheet("color: orange");
         ui->label->setText("Status: Lecture Finished");
     }
@@ -422,13 +372,20 @@ void MainDialog::on_pushButton_2_clicked()
 {
     number_of_recordings++ ;
 
-    /******* If checkbox is checked, change to media mode, i.e., fps=30 *******/
-    /******* Else fps=1 for keeping the video output small *******/
+    audio_device_info = QAudioDeviceInfo::defaultInputDevice() ;
+    audio_device_name = audio_device_info.deviceName() ;
+
+    qDebug() << audio_device_name ;
+
+    /******* If checkbox is checked, change to media mode, i.e., fps=24 *******/
+    /******* Else fps=5 for keeping the video output small *******/
     if(ui->checkBox->isChecked()) {
-        fps = "30" ;
+        fps = "24" ;
+        video_bit_rate = "200k" ;
     }
     else{
-        fps = "3" ;
+        fps = "5" ;
+        video_bit_rate = "82k" ;
     }
 
     ui->label->setStyleSheet("color: green");
@@ -500,13 +457,13 @@ void MainDialog::on_pushButton_2_clicked()
 
                 // -i stands for input. So in this case, we have two inputs, a screen and a microphone
                 << "-i"
-                << "video=screen-capture-recorder:audio=Microphone (Realtek High Definition Audio)"
-                // Video codec. It's the same as "-vcodec". CO-DEC stands for Compressor/Decompressor
+                << "video=screen-capture-recorder:audio=" + audio_device_name
 
+                // Video codec. It's the same as "-vcodec". CO-DEC stands for Compressor/Decompressor
                 << "-c:v"
                 // Since the video is been recorded for a web browser, we chose the video codec that is
-                // compatible with all web browsers, i.e., the codec named VP8
-                << "libvpx"
+                // compatible with all web browsers, i.e., the codec named H.264
+                << "libx264"
 
                 // Same as "-framerate"
                 << "-r"
@@ -519,27 +476,41 @@ void MainDialog::on_pushButton_2_clicked()
 
                 // Chooses goal video bitrate
                 << "-b:v"
-                << "98k"
+                << video_bit_rate
 
-                // Fixes bitrate to 98kbps
+                // Fixes bitrate to 82kbps
                 << "-minrate"
-                << "98k"
+                << video_bit_rate
                 << "-maxrate"
-                << "98k"
+                << video_bit_rate
 
+                // Sets a standard height for the video. This standardization is useful for the
+                // videos to maintain approximately the same size. It is important to note that
+                // one should not force the video to some height and width, for example 640x480.
+                // the ratio 640/480=1.33 which is a different aspect ratio to that of a widescreen
+                // 16:9 or 16:10 display (which are the more common ones). What this command does is
+                // it multiplies the aspect ratio of the computer being recorded by 1080. By doing that,
+                // one keeps the aspect ratio and do not distort the video itself. For example, a 15 inch
+                // Macbook Pro has a display resolution of 2880x1800, which gives an aspect ratio of 1.6.
+                // Therefore, the video will be recorded at 1080*1.6x1080 = 1728x1080
+                << "-vf"
+                << "scale=-1:1080"
 
+                // Chooses automatically the optimal number of threads.
+                // These threads are CPU threads, not application threads
+                << "-threads"
+                << "0"
 
                 // Chooses color space to be YUV (YCbCr, which stands for Luminance, blue-difference and
                 // red-difference chroma components)
                 << "-pix_fmt"
                 << "yuv420p"
 
-                // Chooses the audio codec to be Vorbis, which is compatible with VB8 and the container WEBM
+                // Chooses the audio codec to be MP3, which is compatible with H.264 and the container MP4
                 << "-c:a"
-                << "libvorbis"
+                << "libmp3lame"
 
-                // Chooses goal audio bitrate. This is the lowest possible audio bitrate. Anything lower than
-                // 32k will generate an error on FFMPEG
+                // Chooses goal audio bitrate. This is a usual bitrate value for speech recording
                 << "-ab"
                 << "32k"
 
@@ -547,20 +518,20 @@ void MainDialog::on_pushButton_2_clicked()
                 << "-ac"
                 << "1"
 
-                // Chooses the audio sampling rate to be 22k
+                // Chooses the audio sampling rate to be 32kHz, which is a usual value for speech recording
                 << "-ar"
-                << "22k"
+                << "32k"
 
-                // output file. The container used is "webm"
-                << full_path + video_file_extension
+                // output file. The container used is "mp4"
+                << full_path + video_file_extension ;
 
 
                 // Records Audio
-
+/*
                 << "-f"
                 << "dshow"
                 << "-i"
-                << "audio=Microphone (Realtek High Definition Audio)"
+                << "audio=" + audio_device_name
                 << "-c:a"
                 << "libmp3lame"
                 << "-ab"
@@ -574,11 +545,9 @@ void MainDialog::on_pushButton_2_clicked()
 
                 // .mp3 output file
                 << full_path + audio_file_extension ;
+*/
 
-                // ESTE ESTE ESTE ffmpeg -y -rtbufsize 500M -f dshow -framerate 5 -i video="screen-capture-recorder":audio="Internal Microphone (Cirrus Logic CS4208 (AB 94))" -c:v libvpx -preset ultrafast -r 5 -deadline realtime -b:v 98k -pix_fmt yuv420p -c:a libvorbis -ab 32k -ac 1 -ar 22k -vf "scale=640:360" "output.webm"
-// ESTEAQUI ffmpeg -y -rtbufsize 500M -f dshow -framerate 3 -i video="screen-capture-recorder":audio="Internal Microphone (Cirrus Logic CS4208 (AB 94))" -c:v libvpx -preset ultrafast -r 3 -deadline realtime -b:v 98k -pix_fmt yuv420p -c:a libvorbis -ab 32k -ac 1 -ar 22k "output.webm"
-
-
+    //qDebug() << ffmpeg_args ;
     connect(ffmpeg_process, SIGNAL(finished(int,QProcess::ExitStatus)), ffmpeg_process, SLOT(deleteLater())) ;
     ffmpeg_process->start("ffmpeg", ffmpeg_args) ;
 }

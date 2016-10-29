@@ -20,10 +20,57 @@ bool check_path(QString path) {
 // make ethernet connection dynamic (default).
 void MainDialog::closeEvent(QCloseEvent *event) {
 
+    if(!ui->pushButton_2->isEnabled() && ui->pushButton_4->isEnabled()) {
+        qDebug() << "Record Pressionado e stoprecording nao pressionado" ;
+        ffmpeg_process->setProcessChannelMode(QProcess::ForwardedChannels);
+        ffmpeg_process->write("q");
+        ffmpeg_process->closeWriteChannel();
+        ffmpeg_process->waitForFinished() ;
+        ffmpeg_process->close();
+    }
+
     if(QFileInfo::exists(rec_dir + filename + QString::number(1) + video_file_extension) ) {
 
-        if(!ui->checkBox_2->isChecked()) {
+        if(ui->checkBox_2->isChecked()) {
+
+            /*********** Creates a .bat file with the transfer routine if autopath is used ***********/
+            QString transfer_cmds = program_dir + QString("config/") + QString("transfer.bat") ;
+            qDebug() << transfer_cmds ;
+            QFile bat_file(transfer_cmds);
+                if (!bat_file.open(QIODevice::WriteOnly | QIODevice::Text))
+                    return;
+
+            QTextStream outcmds(&bat_file);
+            outcmds << "plink -ssh pi@169.254.96.87 -pw raspberry -batch  \"mkdir -p /home/pi/videos/" << course_code +
+                       QString("/") + class_code + QString("/") + year+QString("_") +semester + QString("/") + "\"\n" +
+                       QString("pscp -pw raspberry ") + rec_dir + filename + video_file_extension + QString(" ") +
+                       rec_dir + filename + audio_file_extension + QString(" ") + QString(" pi@169.254.96.87:videos/") +
+                       course_code + QString("/") + class_code + QString("/") +  year+QString("_")+ semester + QString("/")  << "\n" ;
+            bat_file.close();
+            /**************************************************************************/
+        }
+
+        else {
+
             QString base_dir = QStandardPaths::writableLocation(QStandardPaths::MoviesLocation) + QString("/") ;
+            /*********************************************************************************************/
+            /*********************************************************************************************/
+            /*********************************************************************************************/
+            /*********** Creates a .bat file with the transfer routine if autopath is NOT used ***********/
+            QString transfer_cmds = program_dir + QString("config/") + QString("transfer.bat") ;
+            QFile bat_file(transfer_cmds);
+                if (!bat_file.open(QIODevice::WriteOnly | QIODevice::Text))
+                    return;
+
+            QTextStream outcmds(&bat_file);
+            outcmds << "plink -ssh pi@169.254.96.87 -pw raspberry -batch \"mkdir -p /home/pi/videos/" << course_code + QString("/") +
+                    class_code + QString("/") + year + QString("_") + semester + QString("/") + "\"\n" +
+                    QString("pscp -pw raspberry ") + rec_dir + filename + video_file_extension + QString(" ") +
+                    rec_dir + filename + audio_file_extension + QString(" ") +
+                    QString(" pi@169.254.96.87:videos/") + course_code + QString("/") +
+                    class_code + QString("/") +  year+QString("_") +semester + QString("/")  << "\n" ;
+            bat_file.close();
+            /**************************************************************************/
         }
 
         /*********** Creates a text file with the video files to be concatenated ***********/
@@ -59,6 +106,66 @@ void MainDialog::closeEvent(QCloseEvent *event) {
         ffmpeg_cat_video->waitForFinished() ;
         ffmpeg_cat_video->close();
         /**************************************************************************/
+
+        /*********************** Extracts Audio Track from Video ************************/
+        QProcess * ffmpeg_ext_audio = new QProcess(this) ;
+        QStringList ffmpeg_ext_audio_args ;
+
+        ffmpeg_ext_audio_args << "-y"
+                              << "-i"
+                              << rec_dir + filename + video_file_extension
+                              << "-vn"
+                              << "-acodec"
+                              << "copy"
+                              << rec_dir + filename + audio_file_extension ;
+
+        ffmpeg_ext_audio->start("ffmpeg", ffmpeg_ext_audio_args) ;
+        ffmpeg_ext_audio->waitForFinished() ;
+        ffmpeg_ext_audio->close();
+        /**************************************************************************/
+
+    }
+    write_remote_xml_cmd_file(filename + video_file_extension, filename + audio_file_extension);
+
+    /*********** Displays message asking if user wants to upload video now ***********/
+    if(QFileInfo::exists(rec_dir + filename + QString::number(1) + video_file_extension) ) {
+        QMessageBox msgBox ;
+        msgBox.setInformativeText("Do you wish to transfer the files now?") ;
+        msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+        msgBox.setDefaultButton(QMessageBox::Yes);
+        int ret = msgBox.exec();
+
+        if(ret == QMessageBox::Yes){
+            /****** Removes trash files, i.e., the text aux files and the video and ******/
+            /****** audio files before concatenation ******/
+            for (uint8_t count = 1; count <= number_of_recordings; count++) {
+                QFile::remove(rec_dir + filename + QString::number(count) + video_file_extension) ;
+            }
+            QFile::remove(rec_dir + "video_list.txt") ;
+
+            ui->label->setStyleSheet("color: orange");
+            ui->label->setText("Status: Please Wait, Transfering Files...");
+
+            transfer_files = new QProcess(this) ;
+            QObject::connect(transfer_files, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(on_finishedTransfer(int , QProcess::ExitStatus ))) ;
+            transfer_files->startDetached(program_dir + QString("config/") + QString("transfer.bat")) ;
+            //transfer->waitForFinished();
+            //transfer->close();
+
+
+            ui->label->setStyleSheet("color: orange");
+            ui->label->setText("Status: Lecture Finished");
+        }
+        else if(ret == QMessageBox::No) {
+            /****** Removes trash files, i.e., the text aux files and the video and ******/
+            /****** audio files before concatenation ******/
+            for (uint8_t count = 1; count <= number_of_recordings; count++) {
+                QFile::remove(rec_dir + filename + QString::number(count) + video_file_extension) ;
+                QFile::remove(rec_dir + filename + QString::number(count) + audio_file_extension) ;
+            }
+            QFile::remove(rec_dir + "audio_list.txt") ;
+            QFile::remove(rec_dir + "video_list.txt") ;
+        }
     }
 
     QProcess * network_setup_dynamic = new QProcess(this) ;
@@ -150,7 +257,7 @@ void MainDialog::on_pushButton_clicked()
     // is prompted to choose the directory on which
     // he/she wants the recording to be saved
     if (!(ui->checkBox_2->isChecked())){
-        MyCourseDialog mcDialog ;
+        MyCourseDialog mcDialog(0, xml_path) ;
         mcDialog.set_dir_mode(false) ;
         mcDialog.setModal(true) ;
         mcDialog.exec() ;
@@ -326,42 +433,44 @@ void MainDialog::on_pushButton_3_clicked()
     ui->label->setText("Status: Lecture Finished");
 
     /*********** Displays message asking if user wants to upload video now ***********/
-    QMessageBox msgBox ;
-    msgBox.setInformativeText("Do you wish to transfer the files now?") ;
-    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-    msgBox.setDefaultButton(QMessageBox::Yes);
-    int ret = msgBox.exec();
+    if(QFileInfo::exists(rec_dir + filename + QString::number(1) + video_file_extension) ) {
+        QMessageBox msgBox ;
+        msgBox.setInformativeText("Do you wish to transfer the files now?") ;
+        msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+        msgBox.setDefaultButton(QMessageBox::Yes);
+        int ret = msgBox.exec();
 
-    if(ret == QMessageBox::Yes){
-        /****** Removes trash files, i.e., the text aux files and the video and ******/
-        /****** audio files before concatenation ******/
-        for (uint8_t count = 1; count <= number_of_recordings; count++) {
-            QFile::remove(rec_dir + filename + QString::number(count) + video_file_extension) ;
+        if(ret == QMessageBox::Yes){
+            /****** Removes trash files, i.e., the text aux files and the video and ******/
+            /****** audio files before concatenation ******/
+            for (uint8_t count = 1; count <= number_of_recordings; count++) {
+                QFile::remove(rec_dir + filename + QString::number(count) + video_file_extension) ;
+            }
+            QFile::remove(rec_dir + "video_list.txt") ;
+
+            ui->label->setStyleSheet("color: orange");
+            ui->label->setText("Status: Please Wait, Transfering Files...");
+
+            transfer_files = new QProcess(this) ;
+            QObject::connect(transfer_files, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(on_finishedTransfer(int , QProcess::ExitStatus ))) ;
+            transfer_files->startDetached(program_dir + QString("config/") + QString("transfer.bat")) ;
+            //transfer->waitForFinished();
+            //transfer->close();
+
+
+            ui->label->setStyleSheet("color: orange");
+            ui->label->setText("Status: Lecture Finished");
         }
-        QFile::remove(rec_dir + "video_list.txt") ;
-
-        ui->label->setStyleSheet("color: orange");
-        ui->label->setText("Status: Please Wait, Transfering Files...");
-
-        transfer_files = new QProcess(this) ;
-        QObject::connect(transfer_files, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(on_finishedTransfer(int , QProcess::ExitStatus ))) ;
-        transfer_files->startDetached(program_dir + QString("config/") + QString("transfer.bat")) ;
-        //transfer->waitForFinished();
-        //transfer->close();
-
-
-        ui->label->setStyleSheet("color: orange");
-        ui->label->setText("Status: Lecture Finished");
-    }
-    else if(ret == QMessageBox::No) {
-        /****** Removes trash files, i.e., the text aux files and the video and ******/
-        /****** audio files before concatenation ******/
-        for (uint8_t count = 1; count <= number_of_recordings; count++) {
-            QFile::remove(rec_dir + filename + QString::number(count) + video_file_extension) ;
-            QFile::remove(rec_dir + filename + QString::number(count) + audio_file_extension) ;
+        else if(ret == QMessageBox::No) {
+            /****** Removes trash files, i.e., the text aux files and the video and ******/
+            /****** audio files before concatenation ******/
+            for (uint8_t count = 1; count <= number_of_recordings; count++) {
+                QFile::remove(rec_dir + filename + QString::number(count) + video_file_extension) ;
+                QFile::remove(rec_dir + filename + QString::number(count) + audio_file_extension) ;
+            }
+            QFile::remove(rec_dir + "audio_list.txt") ;
+            QFile::remove(rec_dir + "video_list.txt") ;
         }
-        QFile::remove(rec_dir + "audio_list.txt") ;
-        QFile::remove(rec_dir + "video_list.txt") ;
     }
 }
 
@@ -385,7 +494,7 @@ void MainDialog::on_pushButton_2_clicked()
     }
     else{
         fps = "5" ;
-        video_bit_rate = "82k" ;
+        video_bit_rate = "200k" ;
     }
 
     ui->label->setStyleSheet("color: green");
@@ -564,8 +673,6 @@ void MainDialog::on_pushButton_4_clicked() {
     ui->pushButton_2->setEnabled(true);
     ui->pushButton_3->setEnabled(true);
     ui->checkBox->setEnabled(true);
-
-
     ffmpeg_process->setProcessChannelMode(QProcess::ForwardedChannels);
     ffmpeg_process->write("q");
     ffmpeg_process->closeWriteChannel();
@@ -583,15 +690,6 @@ void MainDialog::on_pushButton_5_clicked()
     ui->label->setText("Status: CAMERA DOCUMENT ON");
     //ui->pushButton_5->setEnabled(false);
 
-    QProcess * netcat_mplayer_client = new QProcess(this) ;
-    netcat_mplayer_client->startDetached(program_dir + QString("config/") + QString("netcat_mplayer_client.bat")) ;
-
-    QProcess * rpi_cam = new QProcess(this) ;
-    rpi_cam->startDetached(program_dir + QString("config/") + QString("rpi_cam.bat")) ;
-}
-
-
-void MainDialog::on_pushButton_6_clicked() {
     QProcess * netcat_mplayer_client = new QProcess(this) ;
     netcat_mplayer_client->startDetached(program_dir + QString("config/") + QString("netcat_mplayer_client.bat")) ;
 

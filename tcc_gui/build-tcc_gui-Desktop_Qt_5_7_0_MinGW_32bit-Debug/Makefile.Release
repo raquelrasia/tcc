@@ -378,6 +378,12 @@ release/moc_logindialog.cpp: ../tcc_gui/maindialog.h \
 		C:/Qt/5.7/mingw53_32/include/QtNetwork/qnetworkinterface.h \
 		C:/Qt/5.7/mingw53_32/include/QtNetwork/qhostaddress.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QMutex \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/QAudioDeviceInfo \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiodeviceinfo.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qtmultimediadefs.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qmultimedia.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudio.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudioformat.h \
 		../tcc_gui/logindialog.h \
 		C:/Qt/5.7/mingw53_32/bin/moc.exe
 	'C:\Qt\5.7\mingw53_32\bin\moc.exe' $(DEFINES) -D__GNUC__ -DWIN32 -IC:/Qt/5.7/mingw53_32/mkspecs/win32-g++ -IC:/Users/luigu/Documents/tcc_gui/tcc_gui/tcc_gui -IC:/Qt/5.7/mingw53_32/include -IC:/Qt/5.7/mingw53_32/include/QtMultimedia -IC:/Qt/5.7/mingw53_32/include/QtWidgets -IC:/Qt/5.7/mingw53_32/include/QtGui -IC:/Qt/5.7/mingw53_32/include/QtANGLE -IC:/Qt/5.7/mingw53_32/include/QtXml -IC:/Qt/5.7/mingw53_32/include/QtNetwork -IC:/Qt/5.7/mingw53_32/include/QtCore -I. -IC:/Qt/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include -IC:/Qt/Tools/mingw530_32/lib/gcc/i686-w64-mingw32/5.3.0/include-fixed -IC:/Qt/Tools/mingw530_32/i686-w64-mingw32/include -IC:/Qt/Tools/mingw530_32/i686-w64-mingw32/include/c++ -IC:/Qt/Tools/mingw530_32/i686-w64-mingw32/include/c++/i686-w64-mingw32 -IC:/Qt/Tools/mingw530_32/i686-w64-mingw32/include/c++/backward ../tcc_gui/logindialog.h -o release/moc_logindialog.cpp
@@ -948,6 +954,12 @@ release/moc_maindialog.cpp: ../tcc_gui/mydialog.h \
 		C:/Qt/5.7/mingw53_32/include/QtNetwork/qabstractsocket.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QMutex \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QCloseEvent \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/QAudioDeviceInfo \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiodeviceinfo.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qtmultimediadefs.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qmultimedia.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudio.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudioformat.h \
 		../tcc_gui/networkconnection.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QCoreApplication \
 		C:/Qt/5.7/mingw53_32/include/QtNetwork/QNetworkAccessManager \
@@ -1246,6 +1258,12 @@ release/main.o: ../tcc_gui/main.cpp ../tcc_gui/logindialog.h \
 		C:/Qt/5.7/mingw53_32/include/QtNetwork/qabstractsocket.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QMutex \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QCloseEvent \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/QAudioDeviceInfo \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiodeviceinfo.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qtmultimediadefs.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qmultimedia.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudio.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudioformat.h \
 		../tcc_gui/networkconnection.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QCoreApplication \
 		C:/Qt/5.7/mingw53_32/include/QtNetwork/QNetworkAccessManager \
@@ -1514,6 +1532,12 @@ release/logindialog.o: ../tcc_gui/logindialog.cpp ../tcc_gui/logindialog.h \
 		C:/Qt/5.7/mingw53_32/include/QtNetwork/qabstractsocket.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QMutex \
 		C:/Qt/5.7/mingw53_32/include/QtGui/QCloseEvent \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/QAudioDeviceInfo \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiodeviceinfo.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qtmultimediadefs.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qmultimedia.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudio.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudioformat.h \
 		../tcc_gui/networkconnection.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QCoreApplication \
 		C:/Qt/5.7/mingw53_32/include/QtNetwork/QNetworkAccessManager \
@@ -2278,6 +2302,12 @@ release/maindialog.o: ../tcc_gui/maindialog.cpp ../tcc_gui/maindialog.h \
 		C:/Qt/5.7/mingw53_32/include/QtNetwork/qnetworkinterface.h \
 		C:/Qt/5.7/mingw53_32/include/QtNetwork/qhostaddress.h \
 		C:/Qt/5.7/mingw53_32/include/QtCore/QMutex \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/QAudioDeviceInfo \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudiodeviceinfo.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qtmultimediadefs.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qmultimedia.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudio.h \
+		C:/Qt/5.7/mingw53_32/include/QtMultimedia/qaudioformat.h \
 		ui_maindialog.h \
 		C:/Qt/5.7/mingw53_32/include/QtWidgets/QAction \
 		C:/Qt/5.7/mingw53_32/include/QtWidgets/qaction.h \

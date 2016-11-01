@@ -73,6 +73,13 @@ class CourseSaveForm(forms.Form):
         label = 'Codigo',
         widget = forms.TextInput(attrs = { 'size' : 10})
     )
+    def clean_code(self) :
+        if 'code' in self.cleaned_data:
+            code = self.cleaned_data['code']
+            if ' ' in code:
+                raise forms.ValidationError('Código da turma não pode ter espaços')                
+            else:
+                return code
 
 class VideoUploadForm(forms.Form):
     file = forms.FileField(

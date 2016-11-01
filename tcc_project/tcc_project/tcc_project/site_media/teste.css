@@ -7,7 +7,7 @@
  	line-height: 1;
     vertical-align:middle;
     text-align: center;
-    margin: 30px 0 0px; 
+    margin: 80px 0 0px; 
 	/*background-color: #362819;*/
 	height: 50px
 }
@@ -25,18 +25,21 @@
 	height: 50px
 }
 
-/*#button {
+#button {
     display: block;
+	font-family: 'Helvetica Neue', 
+	sans-serif;
     width: 200px;
     height: 15px;
-    /*background: #fcd000;
-    padding: 20px;
+    background: Transparent;
+   	border: 6px solid rgba(20, 30, 20, 0.2);
+    padding: 15px;
     text-align: center;
-    border-radius: 15px;
+    border-radius: 5px;
     color: black;
     font-weight: bold;
-}*/
-
+}
+/*
 #button {
 	font-family: 'Helvetica Neue', 
 	sans-serif;
@@ -44,31 +47,56 @@
     color: black;
     background-color: Transparent;
     background-repeat:no-repeat;
- 	/*border: 7px solid rgba(252, 208, 30, 0.5);*/
+ 	border: 7px solid rgba(252, 208, 30, 0.5);
  	border: 7px solid rgba(20, 30, 20, 0.2);
  	border-radius: 4px;
     cursor:pointer;
     overflow: hidden;
     outline:none;
-}
+}*/
 
 #button:hover {
 	font-family: 'Helvetica Neue', 
 	sans-serif;
     text-align: center;
     color: black;
-    background-color: #fcd044;
+    /*background-color: #fcd044;*/
     /*border: 7px solid rgba(252, 208, 30, 0.5);*/
- 	border: 6px solid rgba(20, 30, 20, 0.2);
+ 	border: 6px solid #fcd044;
  	border-radius: 4px;
     cursor:pointer;
     overflow: hidden;
     outline:none;
 }
 
-
-#nav {
-	float: right;
+.nav{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid #e7e7e7;
+    background-color: #f3f3f3;
+    position: fixed;
+    top: 0;
+    width: 100%;
+}
+.nav .nav_item a:hover{
+    background-color: #ffd733; 
+}
+.nav .nav_item{
+ 	float: left;
+    border-right: 1px solid #bbb;
+}
+.nav .nav_item a{
+    display: block;
+    color: #666;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-family: 'Helvetica Neue', sans-serif;
+}
+.nav .nav_item:last-child {
+    border-right: none;
 }
 
 input {
@@ -144,8 +172,12 @@ ul.course .edit{
 }
 
 body {
-    padding-left: 50px;
+    padding-left: 0px;
     padding-right: 50px;
+ 	/*background-image: url("/site_media/pattern1.jpg");*/
+    /*background-repeat: no-repeat;*/
+    /*background-position: left top;*/
+    /*background-attachment: fixed;*/
 }
 
 .flex {

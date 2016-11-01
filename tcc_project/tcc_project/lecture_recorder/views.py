@@ -353,6 +353,7 @@ def course_page(request, course_code):
         'course' : course,
         'classes': classes,
         'show_tags': False,
+        'show_edit' : True,
         'show_button' : show_button
     })      
     return render_to_response('course_page.html', variables)
@@ -362,7 +363,6 @@ def course_list_page(request):
     course = Course.objects.all() 
     variables = RequestContext (request, {
         'course' : course,
-        'show_edit' : True,
     })      
     return render_to_response('course_list_page.html', variables)
 
@@ -408,7 +408,8 @@ def class_save_page(request, course_code):
             if form.is_valid():
                 my_class, created = Class.objects.get_or_create(name = form.cleaned_data['name'],
                                                                 year = form.cleaned_data['year'], 
-                                                                semester = form.cleaned_data['semester'])
+                                                                semester = form.cleaned_data['semester'],
+                                                                course = course)
                                                                                                                        
                                                              
                 # my_class = Class(name = form.cleaned_data['name'])

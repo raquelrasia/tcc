@@ -8,7 +8,6 @@ function open_video(){
 	});
 	item.hide();
 	close_video.show();
-	console.log("ta");
 	return false;
 };
 
@@ -52,6 +51,7 @@ function close_audio(){
 	    delete this; // @sparkey reports that this did the trick (even though it makes no sense!)
 	});
 	item.hide();
+	console.log("ta2");
 	open_audio.show();
 	return false;
 };

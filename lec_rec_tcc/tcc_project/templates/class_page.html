@@ -1,0 +1,21 @@
+{%extends "base.html"%}
+{% block external %}
+	<script type="text/javascript" src="/site_media/open_media.js"></script>
+{%endblock%}
+{%block title%} {{ course.code }} || {{ class.name }}  {%endblock%}
+{%block head%} {{ course.name }} - {{ course.code  }} 
+<h4>
+{{ class.name }} - {{ class.year }}/{{ class.semester }}
+</h4>
+<p>
+Professor(a): <a href="/user/{{ class.user_teacher.username }}"> {{ class.user_teacher.first_name }} {{ class.user_teacher.last_name }} </a>
+</p>
+{%endblock%}
+{%block content%}
+{%if is_class_teacher%}
+	{% include "lecture_list.html"%}
+ 	<form action="video_audio_upload/">
+   	<input type="submit" value="Adicionar Aula" />
+	</form>
+{%endif%}
+{%endblock%}

@@ -30,6 +30,7 @@
 
 tcc_project/tcc_project/tcc_project/files/
 tcc_project/tcc_project/client/files/
+tcc_project/tcc_virtualenv
 *.pyc
 tcc_gui/build-tcc_gui-Functional_Desktop_Qt_5_6_1_MSVC2015_64bit-Debug/Makefile
 tcc_gui/build-tcc_gui-Functional_Desktop_Qt_5_6_1_MSVC2015_64bit-Debug/Makefile.Debug

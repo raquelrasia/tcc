@@ -1,0 +1,7 @@
+{%extends "base.html"%}
+{%block title%} {{ user.username }} {%endblock%}
+{%block head%} Professor(a)  {{ user.first_name }} {{ user.last_name }}
+</p> Aulas ministradas: </p> {%endblock%}
+{%block content%}
+	{% include "class_list.html"%}
+{%endblock%}

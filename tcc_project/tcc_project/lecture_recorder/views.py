@@ -37,7 +37,7 @@ def user_page(request, username):
         print(course.code)
 
     variables = RequestContext (request, {
-        'username' : username,
+        'user' : user,
         'classes': classes,
         'show_tags' : True,
     })      
@@ -353,6 +353,7 @@ def course_page(request, course_code):
         'course' : course,
         'classes': classes,
         'show_tags': False,
+        'show_edit' : True,
         'show_button' : show_button
     })      
     return render_to_response('course_page.html', variables)
@@ -362,7 +363,6 @@ def course_list_page(request):
     course = Course.objects.all() 
     variables = RequestContext (request, {
         'course' : course,
-        'show_edit' : True,
     })      
     return render_to_response('course_list_page.html', variables)
 
@@ -408,7 +408,8 @@ def class_save_page(request, course_code):
             if form.is_valid():
                 my_class, created = Class.objects.get_or_create(name = form.cleaned_data['name'],
                                                                 year = form.cleaned_data['year'], 
-                                                                semester = form.cleaned_data['semester'])
+                                                                semester = form.cleaned_data['semester'],
+                                                                course = course)
                                                                                                                        
                                                              
                 # my_class = Class(name = form.cleaned_data['name'])
@@ -528,17 +529,34 @@ def index(request):
 
 
 def video_view_page(request, path):
-    video_url= path
+    ajax = request.GET.has_key('ajax')
+    if not  ajax:
+        video_url= path
+    else:
+        if(request.GET.has_key("path")):
+            video_url = request.GET["path"]
+            print(video_url)
+        else:
+            return HttpResponse("failure")
+
     variables = RequestContext (request, {
-        'video_url': video_url,
-    })      
+            'video_url': video_url,
+        })      
     return render_to_response('video_view.html', variables)
 
 def audio_view_page(request, path):
-    audio_url= path
+    ajax = request.GET.has_key('ajax')
+    if not  ajax:
+        audio_url= path
+    else:
+        if(request.GET.has_key("path")):
+            audio_url = request.GET["path"]
+        else:
+            return HttpResponse("failure")
+
     variables = RequestContext (request, {
-        'audio_url': audio_url,
-    })      
+            'audio_url': audio_url,
+        })      
     return render_to_response('audio_view.html', variables)
 
 

@@ -49,3 +49,8 @@ function getCookie(name) {
     console.log(cookieValue);
     return cookieValue;
 };
+
+function course_save_click(){
+	window.location.href = '/course_save/';
+    return false;
+};

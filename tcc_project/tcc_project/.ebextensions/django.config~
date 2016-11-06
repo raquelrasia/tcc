@@ -1,0 +1,3 @@
+option_settings:
+ aws:elasticbeanstalk:container:python:
+  WSGIPath: home/raquel/tcc_proj/tcc_project/wsgi.py

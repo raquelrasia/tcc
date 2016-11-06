@@ -1,0 +1,18 @@
+{%if classes %}
+<ul class = "classes">
+	{%for class in classes %}
+ 		<li>
+			<a href=" /class/{{ class.course.code }}/{{ class.name }}/{{ class.year }}/{{ class.semester }}" class="title">
+			{{ class.course.code}} - {{ class.course.name }} : {{ class.name }} - {{ class.year }}/{{ class.semester }} </a>
+			{%if show_edit %}
+
+				{% if class.user_teacher == user %}
+					<a href="/course_save/?code={{ my_course.code|escape }}" class="edit">[editar]</a>
+				{% endif %}
+			{% endif %}
+	    </li>
+	{% endfor %}
+</ul>
+{% else %}
+ <p> Nenhuma Turma </p>
+{%endif%}

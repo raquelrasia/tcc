@@ -1,5 +1,3 @@
-http://lecture-recordings-env.mx2p2ida56.us-west-2.elasticbeanstalk.com/
+http://lec-rec-env.9ph373tpbd.us-west-2.elasticbeanstalk.com/
 
-
-
-http://lec-rec-env.9ph373tpbd.us-west-2.elasticbeanstalk.com/login/
+https://goo.gl/eg45lB

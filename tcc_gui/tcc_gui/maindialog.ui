@@ -26,42 +26,42 @@
     <item row="1" column="1">
      <widget class="QPushButton" name="pushButton_2">
       <property name="text">
-       <string>Record</string>
+       <string>Gravar</string>
       </property>
      </widget>
     </item>
     <item row="2" column="0">
      <widget class="QPushButton" name="pushButton_3">
       <property name="text">
-       <string>End Lecture</string>
+       <string>Encerrar Aula</string>
       </property>
      </widget>
     </item>
     <item row="1" column="0">
      <widget class="QPushButton" name="pushButton">
       <property name="text">
-       <string>New Lecture</string>
+       <string>Nova Aula</string>
       </property>
      </widget>
     </item>
     <item row="0" column="1">
      <widget class="QCheckBox" name="checkBox">
       <property name="text">
-       <string>Media Mode</string>
+       <string>Modo mídia</string>
       </property>
      </widget>
     </item>
     <item row="0" column="0">
      <widget class="QCheckBox" name="checkBox_2">
       <property name="text">
-       <string>Automatically Create Directories and Files</string>
+       <string>Criar automaticamente diretórios e arquivos</string>
       </property>
      </widget>
     </item>
     <item row="2" column="1">
      <widget class="QPushButton" name="pushButton_4">
       <property name="text">
-       <string>Stop Recording</string>
+       <string>Parar gravação</string>
       </property>
      </widget>
     </item>
@@ -77,7 +77,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Status:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Estado:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
   <widget class="QPushButton" name="pushButton_5">
@@ -90,7 +90,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Document Camera</string>
+    <string>Câmera de Documentos</string>
    </property>
   </widget>
  </widget>

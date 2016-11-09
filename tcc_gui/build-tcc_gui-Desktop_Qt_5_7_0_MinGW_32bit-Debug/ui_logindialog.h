@@ -51,7 +51,7 @@ public:
         groupBox->setGeometry(QRect(10, 0, 621, 301));
         pushButton = new QPushButton(groupBox);
         pushButton->setObjectName(QStringLiteral("pushButton"));
-        pushButton->setGeometry(QRect(100, 230, 111, 41));
+        pushButton->setGeometry(QRect(100, 230, 140, 41));
         verticalLayoutWidget = new QWidget(groupBox);
         verticalLayoutWidget->setObjectName(QStringLiteral("verticalLayoutWidget"));
         verticalLayoutWidget->setGeometry(QRect(10, 60, 601, 101));
@@ -95,7 +95,7 @@ public:
 
         ContinueSession = new QPushButton(groupBox);
         ContinueSession->setObjectName(QStringLiteral("ContinueSession"));
-        ContinueSession->setGeometry(QRect(400, 230, 111, 41));
+        ContinueSession->setGeometry(QRect(400, 230, 140, 41));
         expire_label = new QLabel(groupBox);
         expire_label->setObjectName(QStringLiteral("expire_label"));
         expire_label->setGeometry(QRect(140, 180, 341, 44));
@@ -108,12 +108,12 @@ public:
     void retranslateUi(QDialog *LoginDialog)
     {
         LoginDialog->setWindowTitle(QApplication::translate("LoginDialog", "LoginDialog", 0));
-        groupBox->setTitle(QApplication::translate("LoginDialog", "Sign In", 0));
+        groupBox->setTitle(QApplication::translate("LoginDialog", "Acesso", 0));
         pushButton->setText(QApplication::translate("LoginDialog", "Login", 0));
         label->setText(QApplication::translate("LoginDialog", "Login", 0));
-        label_2->setText(QApplication::translate("LoginDialog", "Password", 0));
-        ContinueSession->setText(QApplication::translate("LoginDialog", "Continue Session", 0));
-        expire_label->setText(QApplication::translate("LoginDialog", "Your session will soon expire. Login to renew your session", 0));
+        label_2->setText(QApplication::translate("LoginDialog", "Senha", 0));
+        ContinueSession->setText(QApplication::translate("LoginDialog", "Continuar sess\303\243o", 0));
+        expire_label->setText(QApplication::translate("LoginDialog", "Sua sess\303\243o expirar\303\241 em breve. Fa\303\247a login para renovar sua sess\303\243o", 0));
     } // retranslateUi
 
 };

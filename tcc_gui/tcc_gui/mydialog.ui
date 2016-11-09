@@ -32,21 +32,21 @@
        </size>
       </property>
       <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Introduction and Lecture Location&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Introdução e Localização da Aula&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
     </item>
     <item>
      <widget class="QLabel" name="label_7">
       <property name="text">
-       <string>Choose or create a lecture folder </string>
+       <string>Escolha ou crie uma pasta da aula</string>
       </property>
      </widget>
     </item>
     <item>
      <widget class="QLabel" name="label_5">
       <property name="text">
-       <string>Note: There must not be another video file in the chosen folder.</string>
+       <string>Nota: Não deve haver outro arquivo de vídeo na pasta escolhida.</string>
       </property>
      </widget>
     </item>
@@ -95,7 +95,7 @@
        <item>
         <widget class="QLabel" name="label">
          <property name="text">
-          <string>Choose Lecture Folder</string>
+          <string>Escolher pasta da aula</string>
          </property>
         </widget>
        </item>
@@ -109,7 +109,7 @@
        <item>
         <widget class="QPushButton" name="pushButton">
          <property name="text">
-          <string>Browse...</string>
+          <string>Pesquisar...</string>
          </property>
         </widget>
        </item>
@@ -131,14 +131,14 @@
     <item>
      <widget class="QPushButton" name="pushButton_2">
       <property name="text">
-       <string>Next</string>
+       <string>Próximo</string>
       </property>
      </widget>
     </item>
     <item>
      <widget class="QPushButton" name="pushButton_3">
       <property name="text">
-       <string>Cancel</string>
+       <string>Cancelar</string>
       </property>
      </widget>
     </item>

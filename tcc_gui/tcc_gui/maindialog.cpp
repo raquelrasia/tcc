@@ -195,7 +195,7 @@ MainDialog::MainDialog(QWidget *parent) :
     ui->menuBar->setNativeMenuBar(false) ;
 #endif
     // Sets window title
-    this->setWindowTitle("Lecture Recorder");
+    this->setWindowTitle("Gravador de aulas");
 
     // Configures NEW LECTURE and END LECTURE push buttons and menubar
     ui->pushButton_3->setEnabled(false);
@@ -210,7 +210,7 @@ MainDialog::MainDialog(QWidget *parent) :
 
     // Configures STATUS label
     ui->label->setStyleSheet("color: red") ;
-    ui->label->setText("Status: NOT RECORDING") ;
+    ui->label->setText("Estado: NÃO GRAVANDO") ;
 
     // Apply some font changes
     font = ui->label->font() ;
@@ -430,14 +430,15 @@ void MainDialog::on_pushButton_3_clicked()
     ui->pushButton_5->setEnabled(false) ;
     ui->checkBox_2->setEnabled(true);
     ui->label->setStyleSheet("color: orange");
-    ui->label->setText("Status: Lecture Finished");
+    ui->label->setText("Estado: Aula Finalizada");
 
     /*********** Displays message asking if user wants to upload video now ***********/
     if(QFileInfo::exists(rec_dir + filename + QString::number(1) + video_file_extension) ) {
         QMessageBox msgBox ;
-        msgBox.setInformativeText("Do you wish to transfer the files now?") ;
+        msgBox.setInformativeText("Você deseja transferir os arquivos agora?") ;
         msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
         msgBox.setDefaultButton(QMessageBox::Yes);
+        msgBox.setWindowTitle("Transferência");
         int ret = msgBox.exec();
 
         if(ret == QMessageBox::Yes){
@@ -449,7 +450,7 @@ void MainDialog::on_pushButton_3_clicked()
             QFile::remove(rec_dir + "video_list.txt") ;
 
             ui->label->setStyleSheet("color: orange");
-            ui->label->setText("Status: Please Wait, Transfering Files...");
+            ui->label->setText("Estado: Aguarde, transferindo arquivos...");
 
             transfer_files = new QProcess(this) ;
             QObject::connect(transfer_files, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(on_finishedTransfer(int , QProcess::ExitStatus ))) ;
@@ -459,7 +460,7 @@ void MainDialog::on_pushButton_3_clicked()
 
 
             ui->label->setStyleSheet("color: orange");
-            ui->label->setText("Status: Lecture Finished");
+            ui->label->setText("Estado: Aula Finalizada");
         }
         else if(ret == QMessageBox::No) {
             /****** Removes trash files, i.e., the text aux files and the video and ******/
@@ -498,7 +499,7 @@ void MainDialog::on_pushButton_2_clicked()
     }
 
     ui->label->setStyleSheet("color: green");
-    ui->label->setText("Status: RECORDING");
+    ui->label->setText("Estado: GRAVANDO");
     ui->pushButton_4->setEnabled(true);
     ui->pushButton_2->setEnabled(false);
     ui->pushButton_3->setEnabled(false);
@@ -667,7 +668,7 @@ void MainDialog::on_pushButton_2_clicked()
 void MainDialog::on_pushButton_4_clicked() {
 
     ui->label->setStyleSheet("color: red");
-    ui->label->setText("Status: NOT RECORDING");
+    ui->label->setText("Estado: NÃO GRAVANDO");
 
     ui->pushButton_4->setEnabled(false);
     ui->pushButton_2->setEnabled(true);
@@ -687,14 +688,14 @@ void MainDialog::on_pushButton_4_clicked() {
 void MainDialog::on_pushButton_5_clicked()
 {
     ui->label->setStyleSheet("color: orange") ;
-    ui->label->setText("Status: CAMERA DOCUMENT ON");
+    ui->label->setText("Estado: CÂMERA DE DOCUMENTO ATIVADA");
     //ui->pushButton_5->setEnabled(false);
 
     QProcess * netcat_mplayer_client = new QProcess(this) ;
     netcat_mplayer_client->startDetached(program_dir + QString("config/") + QString("netcat_mplayer_client.bat")) ;
 
     QProcess * rpi_cam = new QProcess(this) ;
-    rpi_cam->startDetached(program_dir + QString("config/") + QString("rpi_cam.bat")) ;
+    rpi_cam->start(program_dir + QString("config/") + QString("rpi_cam.bat")) ;
 }
 
  void MainDialog::set_xml_path(QString path)
@@ -727,7 +728,7 @@ void MainDialog::on_pushButton_5_clicked()
 
  void MainDialog::on_finishedTransfer(int exitCode, QProcess::ExitStatus exitStatus)
  {
-    qDebug() << "Trasnfer Finished";
+    qDebug() << "Transferência concluída";
     QProcess * transfer = new QProcess(this) ;
     transfer->startDetached(program_dir + QString("config/") + QString("xml_sync.bat")) ;
     transfer_files->close();

@@ -28,7 +28,7 @@ MyDialog::MyDialog(QWidget *parent) :
     ui->setupUi(this);
 
     // Set title
-    this->setWindowTitle("Choose Lecture Directory");
+    this->setWindowTitle("Escolha diretório da aula");
 
     // Set path to standard location (e.g., Videos, Documents, etc)
     dir_videos = QStandardPaths::writableLocation(QStandardPaths::MoviesLocation) + QString("/") ;
@@ -58,7 +58,7 @@ MyDialog::MyDialog(QWidget *parent) :
     else {
         ui->label_8->setVisible(true);
         ui->label_8->setStyleSheet("color: red");
-        ui->label_8->setText("File already exists. Please choose a different file name.");
+        ui->label_8->setText("Arquivo existente. Escolha um nome de arquivo diferente.");
         ui->pushButton_2->setEnabled(false) ;
     }
 
@@ -100,7 +100,7 @@ void MyDialog::on_pushButton_clicked()
     else {
         ui->label_8->setVisible(true);
         ui->label_8->setStyleSheet("color: red");
-        ui->label_8->setText("File already exists. Please choose a different file name.");
+        ui->label_8->setText("Arquivo existente. Escolha um nome de arquivo diferente.");
         ui->pushButton_2->setEnabled(false) ;
     }
 }

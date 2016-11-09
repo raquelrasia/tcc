@@ -23,14 +23,14 @@
     </rect>
    </property>
    <property name="title">
-    <string>Sign In</string>
+    <string>Acesso</string>
    </property>
    <widget class="QPushButton" name="pushButton">
     <property name="geometry">
      <rect>
       <x>100</x>
       <y>230</y>
-      <width>111</width>
+      <width>140</width>
       <height>41</height>
      </rect>
     </property>
@@ -67,7 +67,7 @@
        <item>
         <widget class="QLabel" name="label_2">
          <property name="text">
-          <string>Password</string>
+          <string>Senha</string>
          </property>
         </widget>
        </item>
@@ -87,12 +87,12 @@
      <rect>
       <x>400</x>
       <y>230</y>
-      <width>111</width>
+      <width>140</width>
       <height>41</height>
      </rect>
     </property>
     <property name="text">
-     <string>Continue Session</string>
+     <string>Continuar sessão</string>
     </property>
    </widget>
    <widget class="QLabel" name="expire_label">
@@ -105,7 +105,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Your session will soon expire. Login to renew your session</string>
+     <string>Sua sessão expirará em breve. Faça login para renovar sua sessão</string>
     </property>
    </widget>
   </widget>

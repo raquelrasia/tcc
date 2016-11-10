@@ -84,7 +84,7 @@ MyCourseDialog::MyCourseDialog(QWidget *parent, QString xml_path) :
     ui(new Ui::MyCourseDialog)
 {
     ui->setupUi(this);
-    this->setWindowTitle("Choose course and class");
+    this->setWindowTitle("Escolha curso e aula");
     QString CourseNamesCode;
     // Uses Dom Model to open XML
     QDomDocument document ;
@@ -96,7 +96,7 @@ MyCourseDialog::MyCourseDialog(QWidget *parent, QString xml_path) :
     }
     else {
         if(!document.setContent(&file)) {
-            qDebug() << "Failed to Load Document" ;
+            qDebug() << "Falha ao carregar o documento" ;
         }
         file.close();
     }

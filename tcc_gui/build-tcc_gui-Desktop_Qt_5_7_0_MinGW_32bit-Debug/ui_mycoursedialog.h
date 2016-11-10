@@ -101,10 +101,10 @@ public:
     void retranslateUi(QDialog *MyCourseDialog)
     {
         MyCourseDialog->setWindowTitle(QApplication::translate("MyCourseDialog", "Dialog", 0));
-        pushButton->setText(QApplication::translate("MyCourseDialog", "Back", 0));
-        pushButton_2->setText(QApplication::translate("MyCourseDialog", "Continue", 0));
-        label->setText(QApplication::translate("MyCourseDialog", "Course List", 0));
-        label_2->setText(QApplication::translate("MyCourseDialog", "Class List", 0));
+        pushButton->setText(QApplication::translate("MyCourseDialog", "Voltar", 0));
+        pushButton_2->setText(QApplication::translate("MyCourseDialog", "Continuar", 0));
+        label->setText(QApplication::translate("MyCourseDialog", "Lista de Cursos", 0));
+        label_2->setText(QApplication::translate("MyCourseDialog", "Lista de Turmas", 0));
     } // retranslateUi
 
 };

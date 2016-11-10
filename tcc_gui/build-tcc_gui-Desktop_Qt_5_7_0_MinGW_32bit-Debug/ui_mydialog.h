@@ -133,15 +133,15 @@ public:
     void retranslateUi(QDialog *MyDialog)
     {
         MyDialog->setWindowTitle(QApplication::translate("MyDialog", "Dialog", 0));
-        label_4->setText(QApplication::translate("MyDialog", "<html><head/><body><p><span style=\" font-size:12pt;\">Introduction and Lecture Location</span></p></body></html>", 0));
-        label_7->setText(QApplication::translate("MyDialog", "Choose or create a lecture folder ", 0));
-        label_5->setText(QApplication::translate("MyDialog", "Note: There must not be another video file in the chosen folder.", 0));
+        label_4->setText(QApplication::translate("MyDialog", "<html><head/><body><p><span style=\" font-size:12pt;\">Introdu\303\247\303\243o e Localiza\303\247\303\243o da Aula</span></p></body></html>", 0));
+        label_7->setText(QApplication::translate("MyDialog", "Escolha ou crie uma pasta da aula", 0));
+        label_5->setText(QApplication::translate("MyDialog", "Nota: N\303\243o deve haver outro arquivo de v\303\255deo na pasta escolhida.", 0));
         label_8->setText(QString());
-        label->setText(QApplication::translate("MyDialog", "Choose Lecture Folder", 0));
+        label->setText(QApplication::translate("MyDialog", "Escolher pasta da aula", 0));
         lineEdit->setText(QString());
-        pushButton->setText(QApplication::translate("MyDialog", "Browse...", 0));
-        pushButton_2->setText(QApplication::translate("MyDialog", "Next", 0));
-        pushButton_3->setText(QApplication::translate("MyDialog", "Cancel", 0));
+        pushButton->setText(QApplication::translate("MyDialog", "Pesquisar...", 0));
+        pushButton_2->setText(QApplication::translate("MyDialog", "Pr\303\263ximo", 0));
+        pushButton_3->setText(QApplication::translate("MyDialog", "Cancelar", 0));
     } // retranslateUi
 
 };

@@ -36,7 +36,6 @@ public:
     QPushButton *pushButton_4;
     QLabel *label;
     QPushButton *pushButton_5;
-    QPushButton *pushButton_6;
 
     void setupUi(QDialog *MainDialog)
     {
@@ -85,9 +84,6 @@ public:
         pushButton_5 = new QPushButton(MainDialog);
         pushButton_5->setObjectName(QStringLiteral("pushButton_5"));
         pushButton_5->setGeometry(QRect(230, 400, 191, 41));
-        pushButton_6 = new QPushButton(MainDialog);
-        pushButton_6->setObjectName(QStringLiteral("pushButton_6"));
-        pushButton_6->setGeometry(QRect(40, 390, 121, 41));
 
         retranslateUi(MainDialog);
 
@@ -97,15 +93,14 @@ public:
     void retranslateUi(QDialog *MainDialog)
     {
         MainDialog->setWindowTitle(QApplication::translate("MainDialog", "Dialog", 0));
-        pushButton_2->setText(QApplication::translate("MainDialog", "Record", 0));
-        pushButton_3->setText(QApplication::translate("MainDialog", "End Lecture", 0));
-        pushButton->setText(QApplication::translate("MainDialog", "New Lecture", 0));
-        checkBox->setText(QApplication::translate("MainDialog", "Media Mode", 0));
-        checkBox_2->setText(QApplication::translate("MainDialog", "Automatically Create Directories and Files", 0));
-        pushButton_4->setText(QApplication::translate("MainDialog", "Stop Recording", 0));
-        label->setText(QApplication::translate("MainDialog", "<html><head/><body><p><span style=\" font-size:12pt;\">Status:</span></p></body></html>", 0));
-        pushButton_5->setText(QApplication::translate("MainDialog", "Document Camera", 0));
-        pushButton_6->setText(QApplication::translate("MainDialog", "test", 0));
+        pushButton_2->setText(QApplication::translate("MainDialog", "Gravar", 0));
+        pushButton_3->setText(QApplication::translate("MainDialog", "Encerrar Aula", 0));
+        pushButton->setText(QApplication::translate("MainDialog", "Nova Aula", 0));
+        checkBox->setText(QApplication::translate("MainDialog", "Modo m\303\255dia", 0));
+        checkBox_2->setText(QApplication::translate("MainDialog", "Criar automaticamente diret\303\263rios e arquivos", 0));
+        pushButton_4->setText(QApplication::translate("MainDialog", "Parar grava\303\247\303\243o", 0));
+        label->setText(QApplication::translate("MainDialog", "<html><head/><body><p><span style=\" font-size:12pt;\">Estado:</span></p></body></html>", 0));
+        pushButton_5->setText(QApplication::translate("MainDialog", "C\303\242mera de Documentos", 0));
     } // retranslateUi
 
 };

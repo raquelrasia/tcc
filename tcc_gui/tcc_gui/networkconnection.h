@@ -3,10 +3,10 @@
 #define NETWORKCONNECTION_H
 
 
-#define BASE_URL                    "http://192.168.0.114:8000/"
+#define BASE_URL                    "http://lec-rec-env.9ph373tpbd.us-west-2.elasticbeanstalk.com/"
 #define LOGIN_URL                   "login/"
-#define LOGIN_TOTAL_URL             "http://192.168.0.114:8000/api/login/"
-#define TEACHER_FILE_TOTAL_URL      "http://192.168.0.114:8000/api/teacher_xml_download/"
+#define LOGIN_TOTAL_URL             "http://lec-rec-env.9ph373tpbd.us-west-2.elasticbeanstalk.com/api/login/"
+#define TEACHER_FILE_TOTAL_URL      "http://lec-rec-env.9ph373tpbd.us-west-2.elasticbeanstalk.com/api/teacher_xml_download/"
 
 #define NO_ERROR_CODE        1
 #define RESPONSE_ERROR      -1

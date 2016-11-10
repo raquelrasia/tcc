@@ -43,7 +43,7 @@ LoginDialog::~LoginDialog()
 
 void LoginDialog::on_pushButton_clicked()
 {
-    QString username = ui->lineEdit->text() ;
+    username = ui->lineEdit->text() ;
     QString password = ui->lineEdit_2->text() ;
 
 

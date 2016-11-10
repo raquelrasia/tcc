@@ -2,8 +2,8 @@
 <ul class = "videos">
 	{%for lecture in lectures %}
  		<li>
- 		Aula de  <a href="{{ lecture.date_name }}"> {{ lecture.date_name }} </a>
-		<br />
+ 		<!-- Aula de  <a href="{{ lecture.date_name }}"> {{ lecture.date_name }} </a> -->
+ 		<b>Aula de  {{ lecture.date_name }}</b>
 		{% include 'lecture_page.html' %}
 		{%if show_tags%}
 		Tags:
@@ -21,9 +21,10 @@
 		{% endif %}
 		{% if show_user %}
 			Posted by:
-			<a href="/user/{{ bookmark.user.username }}/" class="username">
-			{{ bookmark.user.username }} </a>
+			<a href="/user/{{ request.user.username }}/" class="username">
+			 {{ class.user_teacher.first_name }} {{ class.user_teacher.last_name }} </a>
 		{% endif %}
+		<br />
 	    </li>
 	{% endfor %}
 </ul>

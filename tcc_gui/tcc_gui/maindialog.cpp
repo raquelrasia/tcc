@@ -171,7 +171,7 @@ void MainDialog::closeEvent(QCloseEvent *event) {
     QProcess * network_setup_dynamic = new QProcess(this) ;
 
     qDebug() << program_dir ;
-    network_setup_dynamic->start(program_dir + QString("config/") + QString("call_bat_admin.bat dynamic"));
+    network_setup_dynamic->start(program_dir + QString("config/") + QString("select_ip.bat dynamic"));
     network_setup_dynamic->waitForFinished() ;
     network_setup_dynamic->close();
 
@@ -232,7 +232,7 @@ MainDialog::MainDialog(QWidget *parent) :
 
     QProcess * network_setup_static = new QProcess(this) ;
 
-    network_setup_static->start(program_dir + QString("config/") + QString("call_bat_admin.bat static"));
+    network_setup_static->start(program_dir + QString("config/") + QString("select_ip.bat static"));
     network_setup_static->waitForFinished() ;
     network_setup_static->close();
 }

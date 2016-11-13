@@ -23,23 +23,27 @@ class FileTransfers():
             file_name  = file.file.name
         elif video_audio == "audio":
             file_name =file.audio_file.name 
-        files = {
-             'file': (os.path.basename(MEDIA_ROOT + file_name), open(MEDIA_ROOT + file_name, 'rb'), 'application/octet-stream')
-        }
 
-        if video_audio == "video":
-            url = VIDEO_UPLOAD_URL
-        elif video_audio == "audio":
-            url = AUDIO_UPLOAD_URL
+        if os.path.isfile(MEDIA_ROOT + file_name):
+            files = {
+                 'file': (os.path.basename(MEDIA_ROOT + file_name), open(MEDIA_ROOT + file_name, 'rb'), 'application/octet-stream')
+            }
 
-        r = requests.post(BASE_URL + url, data=payload, files=files, headers=dict(Referer= BASE_URL + url))
-        try:
-            print(r.json())
-            if r.json()['state'] == 'video uploaded' or r.json()['state'] == 'audio uploaded':
-                return 1
-            else:
-                return 0
-        except:
+            if video_audio == "video":
+                url = VIDEO_UPLOAD_URL
+            elif video_audio == "audio":
+                url = AUDIO_UPLOAD_URL
+
+            r = requests.post(BASE_URL + url, data=payload, files=files, headers=dict(Referer= BASE_URL + url))
+            try:
+                print(r.json())
+                if r.json()['state'] == 'video uploaded' or r.json()['state'] == 'audio uploaded':
+                    return 1
+                else:
+                    return 0
+            except:
+                return -1
+        else:
             return -1
 
     def teacher_file_download(self, client, username):

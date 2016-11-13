@@ -1,4 +1,4 @@
-BASE_URL = "http://192.168.0.114:8000/"
+BASE_URL = "http://lec-rec-env.9ph373tpbd.us-west-2.elasticbeanstalk.com/"
 MEDIA_ROOT = '/home/pi/'
 LOGIN_URL = "login/"
 VIDEO_UPLOAD_URL = "api/video_upload/"

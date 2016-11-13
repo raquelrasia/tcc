@@ -5,6 +5,7 @@ LoginDialog::LoginDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::LoginDialog)
 {
+    NetworkConnection connection;
     ui->setupUi(this);
     this->setWindowTitle("Login");
     auth_file_path =  make_xml_path() + "auth_info.xml";
@@ -14,6 +15,11 @@ LoginDialog::LoginDialog(QWidget *parent) :
     {
         close() ;
         QString xml_path = make_xml_path() + username + ".xml";
+        QString error = connection.downloadXmlTeacherFile(username, xml_path);
+        if (error == "-1")
+        {
+            QMessageBox::warning(this, "Courses/Classes File", "No Course/Class registered. You need to register them online before using the application") ;
+        }
         MainDialog mdialog ;
         mdialog.set_xml_path(xml_path);
         mdialog.set_username(username);

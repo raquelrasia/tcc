@@ -91,6 +91,5 @@ QString NetworkConnection::downloadXmlTeacherFile(QString username, QString xml_
             stream << response << endl;
         }
     }
-
     return xml_path;
 }

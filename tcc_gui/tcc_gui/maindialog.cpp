@@ -148,7 +148,7 @@ void MainDialog::closeEvent(QCloseEvent *event) {
 
             transfer_files = new QProcess(this) ;
             QObject::connect(transfer_files, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(on_finishedTransfer(int , QProcess::ExitStatus ))) ;
-            transfer_files->startDetached(program_dir + QString("config/") + QString("transfer.bat")) ;
+            transfer_files->start(program_dir + QString("config/") + QString("transfer.bat")) ;
             //transfer->waitForFinished();
             //transfer->close();
 
@@ -171,7 +171,7 @@ void MainDialog::closeEvent(QCloseEvent *event) {
     QProcess * network_setup_dynamic = new QProcess(this) ;
 
     qDebug() << program_dir ;
-    network_setup_dynamic->start(program_dir + QString("config/") + QString("select_ip.bat dynamic"));
+    network_setup_dynamic->start(program_dir + QString("config/") + QString("call_bat_admin.bat dynamic"));
     network_setup_dynamic->waitForFinished() ;
     network_setup_dynamic->close();
 
@@ -232,7 +232,7 @@ MainDialog::MainDialog(QWidget *parent) :
 
     QProcess * network_setup_static = new QProcess(this) ;
 
-    network_setup_static->start(program_dir + QString("config/") + QString("select_ip.bat static"));
+    network_setup_static->start(program_dir + QString("config/") + QString("call_bat_admin.bat static"));
     network_setup_static->waitForFinished() ;
     network_setup_static->close();
 }
@@ -454,9 +454,14 @@ void MainDialog::on_pushButton_3_clicked()
 
             transfer_files = new QProcess(this) ;
             QObject::connect(transfer_files, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(on_finishedTransfer(int , QProcess::ExitStatus ))) ;
-            transfer_files->startDetached(program_dir + QString("config/") + QString("transfer.bat")) ;
-            //transfer->waitForFinished();
-            //transfer->close();
+            transfer_files->start(program_dir + QString("config/") + QString("transfer.bat")) ;
+            transfer_files->waitForStarted();
+            qDebug() << transfer_files->state();
+            qDebug() <<"Comecei";
+            transfer_files->waitForFinished();
+            qDebug() <<"Terminei";
+            qDebug() << transfer_files->state();
+            //transfer->close();state
 
 
             ui->label->setStyleSheet("color: orange");
@@ -718,19 +723,39 @@ void MainDialog::on_pushButton_5_clicked()
          if (!bat_file.open(QIODevice::WriteOnly | QIODevice::Text))
              return false;
      QTextStream outcmds(&bat_file);
-     outcmds << "plink -ssh pi@169.254.96.87 -pw raspberry -batch \"python /home/pi/client/video_xml_manager.py "
-             << course_code + QString(" ") + class_code + QString(" ")+ year + QString(" ") +
-                semester +QString(" ") +lecture_date +QString(" ") + video_name + QString(" ") +
-                audio_name + QString(" ") + username <<" \n pause \n" ;
+     outcmds << "plink -ssh pi@169.254.96.87 -pw raspberry \n";
      bat_file.close();
      return true;
  }
 
  void MainDialog::on_finishedTransfer(int exitCode, QProcess::ExitStatus exitStatus)
  {
+    QDate date = QDate::currentDate();
+    QString lecture_date = date.toString("dd-MM-yyyy") ;
+    QString video_name = filename + video_file_extension;
+    QString audio_name = filename + audio_file_extension;
+    transfer_files->close();
     qDebug() << "Transferência concluída";
     QProcess * transfer = new QProcess(this) ;
-    transfer->startDetached(program_dir + QString("config/") + QString("xml_sync.bat")) ;
-    transfer_files->close();
+    transfer->start(program_dir + QString("config/") + QString("xml_sync.bat")) ;
+    QString cmds = QString("nohup python /home/pi/client/video_xml_manager.py ") +
+                    course_code + QString(" ") + class_code + QString(" ")+ year + QString(" ") +
+                    semester +QString(" ") +lecture_date +QString(" ") + video_name + QString(" ") +
+                    audio_name + QString(" ") + username +QString(" & \n");
+
+    if (!transfer->waitForStarted(500)) {
+        qWarning("error : waitForStarted failed after 500ms");
+    }
+    qDebug() << "comecei";
+    if (transfer->write(qPrintable(cmds)) == -1) {
+        qWarning("error : write cmds failed");
+    }
+    if (transfer->write("logout \n") == -1) {
+        qWarning("error : write 2 failed");
+    }
+    qDebug() << "mandei exit";
+    transfer->waitForFinished();
+    transfer->close();
+    qDebug() << "Terminei";
  }
 

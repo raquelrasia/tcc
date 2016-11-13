@@ -13,19 +13,20 @@ class Client():
         self.lecture = lecture
         self.audio = audio
         self.video = video
+        self.video_path = self.get_video_path(course, my_class)
 
         if not self.logged:
             self.client, self.logged = self.login(username, password)
             if self.logged:
                 self.username = username
-                self.file_transfers = FileTransfers(self.client)
-                self.video_path = self.get_video_path(course, my_class)                
+                self.file_transfers = FileTransfers(self.client)                
                # self.teacher_fname = self.file_transfers.teacher_file_download(self.client, self.username)
                 self.videos_remote_fname = self.file_transfers.video_file_download(self.client, course, my_class, self.username)
                 #.file_transfers.file_upload(video_path, course, my_class, 'hehehehe', '10102010')
     
     def login(self, username, password):
         client = requests.session()
+        #client.config['keep_alive'] = False
         # Retrieve the CSRF token first
         try:
             client.get(BASE_URL + LOGIN_URL)

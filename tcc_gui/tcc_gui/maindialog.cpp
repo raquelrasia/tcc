@@ -149,9 +149,6 @@ void MainDialog::closeEvent(QCloseEvent *event) {
             transfer_files = new QProcess(this) ;
             QObject::connect(transfer_files, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(on_finishedTransfer(int , QProcess::ExitStatus ))) ;
             transfer_files->start(program_dir + QString("config/") + QString("transfer.bat")) ;
-            //transfer->waitForFinished();
-            //transfer->close();
-
 
             ui->label->setStyleSheet("color: orange");
             ui->label->setText("Status: Lecture Finished");
@@ -455,14 +452,6 @@ void MainDialog::on_pushButton_3_clicked()
             transfer_files = new QProcess(this) ;
             QObject::connect(transfer_files, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(on_finishedTransfer(int , QProcess::ExitStatus ))) ;
             transfer_files->start(program_dir + QString("config/") + QString("transfer.bat")) ;
-            transfer_files->waitForStarted();
-            qDebug() << transfer_files->state();
-            qDebug() <<"Comecei";
-            transfer_files->waitForFinished();
-            qDebug() <<"Terminei";
-            qDebug() << transfer_files->state();
-            //transfer->close();state
-
 
             ui->label->setStyleSheet("color: orange");
             ui->label->setText("Estado: Aula Finalizada");
@@ -692,8 +681,8 @@ void MainDialog::on_pushButton_4_clicked() {
 // Defines behaviour of the "DOCUMENT CAMERA" push button
 void MainDialog::on_pushButton_5_clicked()
 {
-    ui->label->setStyleSheet("color: orange") ;
-    ui->label->setText("Estado: CÂMERA DE DOCUMENTO ATIVADA");
+    //ui->label->setStyleSheet("color: orange") ;
+    //ui->label->setText("Estado: CÂMERA DE DOCUMENTO ATIVADA");
     //ui->pushButton_5->setEnabled(false);
 
     QProcess * netcat_mplayer_client = new QProcess(this) ;
@@ -754,8 +743,6 @@ void MainDialog::on_pushButton_5_clicked()
         qWarning("error : write 2 failed");
     }
     qDebug() << "mandei exit";
-    transfer->waitForFinished();
-    transfer->close();
-    qDebug() << "Terminei";
+    qDebug() << "Terminei Start Upload";
  }
 

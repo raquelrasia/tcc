@@ -3,6 +3,7 @@ from file_transfers import FileTransfers
 from xml_handler import*
 from models import Course, Class, Video
 from includes import *
+import os.path
 
 class Client():
     def __init__(self, username, password, course, my_class, lecture, audio, video):
@@ -72,12 +73,19 @@ class Client():
                     self.erase_file(audio.audio_file)
                     remove_audio_from_xml(audio)
 
+        prettyfied = prettify_all(local_xml_name)
+        with open(local_xml_name.split('.xml')[-1] + '_pretty.xml', 'w') as f:
+                    f.write(prettyfied)
+
+        prettyfied
+
     def get_video_path(self, course, my_class):
         path = course.code +'/'+ my_class.name + '/' + str(my_class.year) + '_' + str(my_class.semester) + '/'
         return path
 
     def erase_file(self, file_obj):
-        os.remove(file_obj.name)
+        if os.path.isfile(MEDIA_ROOT + file_obj.name):
+            os.remove(MEDIA_ROOT + file_obj.name)
 
 #login_data = dict(username=EMAIL, password=PASSWORD, csrfmiddlewaretoken=csrftoken, next='/')
 #r = client.post(URL, data=login_data, headers=dict(Referer=URL))

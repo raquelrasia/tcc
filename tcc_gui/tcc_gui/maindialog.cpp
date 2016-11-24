@@ -144,14 +144,11 @@ void MainDialog::closeEvent(QCloseEvent *event) {
             QFile::remove(rec_dir + "video_list.txt") ;
 
             ui->label->setStyleSheet("color: orange");
-            ui->label->setText("Status: Please Wait, Transfering Files...");
+            ui->label->setText("Estado: Aguarde... Transferindo Arquivos");
 
             transfer_files = new QProcess(this) ;
             QObject::connect(transfer_files, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(on_finishedTransfer(int , QProcess::ExitStatus ))) ;
             transfer_files->start(program_dir + QString("config/") + QString("transfer.bat")) ;
-
-            ui->label->setStyleSheet("color: orange");
-            ui->label->setText("Status: Lecture Finished");
         }
         else if(ret == QMessageBox::No) {
             /****** Removes trash files, i.e., the text aux files and the video and ******/
@@ -446,15 +443,12 @@ void MainDialog::on_pushButton_3_clicked()
             }
             QFile::remove(rec_dir + "video_list.txt") ;
 
-            ui->label->setStyleSheet("color: orange");
+            ui->label->setStyleSheet("color: red");
             ui->label->setText("Estado: Aguarde, transferindo arquivos...");
 
             transfer_files = new QProcess(this) ;
             QObject::connect(transfer_files, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(on_finishedTransfer(int , QProcess::ExitStatus ))) ;
             transfer_files->start(program_dir + QString("config/") + QString("transfer.bat")) ;
-
-            ui->label->setStyleSheet("color: orange");
-            ui->label->setText("Estado: Aula Finalizada");
         }
         else if(ret == QMessageBox::No) {
             /****** Removes trash files, i.e., the text aux files and the video and ******/
@@ -744,5 +738,7 @@ void MainDialog::on_pushButton_5_clicked()
     }
     qDebug() << "mandei exit";
     qDebug() << "Terminei Start Upload";
+    ui->label->setStyleSheet("color: orange");
+    ui->label->setText("Estado: Aula Finalizada");
  }
 
